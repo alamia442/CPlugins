@@ -7,6 +7,7 @@
 # Please see < https://github.com/UsergeTeam/Userge/blob/master/LICENSE >
 #
 # All rights reserved.
+import re
 
 import requests
 from bs4 import BeautifulSoup
