@@ -29,12 +29,13 @@ async def get_links(message: Message):
         await message.err("No links found!")
         return
     reply = "<b>All Links</b> :\n\n"
-    reqs = requests.get(links)
-    soup = BeautifulSoup(reqs.text, 'html.parser')
-    for link in soup.find_all('a'):
-        a = link.get('href')
-        if a.startswith('http'):
-            reply += f" 👉 `{a}`\n"
-        else:
-            reply += f" 👉 `{''.join((links, a))}`\n"
+    for link in links:
+        reqs = requests.get(link)
+        soup = BeautifulSoup(reqs.text, 'html.parser')
+        for l in soup.find_all('a'):
+            a = l.get('href')
+            if a.startswith('http'):
+                reply += f" 👉 `{a}`\n"
+            else:
+                reply += f" 👉 `{''.join((link, a))}`\n"
     await message.edit(reply, parse_mode="md")
