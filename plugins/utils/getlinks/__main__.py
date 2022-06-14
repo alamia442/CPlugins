@@ -32,7 +32,7 @@ async def get_links(message: Message):
     for link in links:
         reqs = requests.get(link)
         soup = BeautifulSoup(reqs.text, 'html.parser')
-        for l in soup.find_all('a'):
+        for l in (element for element in soup.find_all('a') if element is not None):
             a = l.get('href')
             if a.startswith('http'):
                 reply += f" 👉 `{a}`\n"
