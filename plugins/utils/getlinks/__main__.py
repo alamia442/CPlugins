@@ -32,9 +32,9 @@ async def get_links(message: Message):
     for link in links:
         reqs = requests.get(link)
         soup = BeautifulSoup(reqs.text, 'html.parser')
-        for l in (element for element in soup.find_all('a') if element is not None):
+        for l in soup.find_all('a'):
             a = l.get('href')
-            if '\/\/' in a:
+            if a and '\/\/' in a:
                 reply += f" 👉 `{a}`\n"
             else:
                 reply += f" 👉 `{''.join((link, a))}`\n"
