@@ -34,8 +34,9 @@ async def get_links(message: Message):
         soup = BeautifulSoup(reqs.text, 'html.parser')
         for l in soup.find_all('a'):
             a = l.get('href')
-            if a and '\/\/' in a:
-                reply += f" 👉 `{a}`\n"
-            else:
-                reply += f" 👉 `{''.join((link, a))}`\n"
+            if a:
+                if '\/\/' in a:
+                    reply += f" 👉 `{a}`\n"
+                else:
+                    reply += f" 👉 `{''.join((link, a))}`\n"
     await message.edit(reply, parse_mode="md")
