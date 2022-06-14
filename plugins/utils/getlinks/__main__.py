@@ -39,5 +39,5 @@ async def get_links(message: Message):
                 if a.startswith('http') or a.startswith('//'):
                     reply += f" 👉 `{a}`\n"
                 else:
-                    reply += f" 👉 `{''.join((urlparse(link).scheme, '://', urlparse(link).netloc, a))}`\n"
+                    reply += f" 👉 `{''.join((urlparse(link).netloc, a))}`\n"
     await message.edit(reply, parse_mode="md")
