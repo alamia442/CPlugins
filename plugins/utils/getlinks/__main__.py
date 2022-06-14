@@ -8,12 +8,13 @@
 #
 # All rights reserved.
 import re
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from telegraph import upload_file
 
 from userge import userge, Message, pool
-from userge.utils import humanbytes
 
 
 @userge.on_cmd("getlinks", about={
@@ -28,15 +29,15 @@ async def get_links(message: Message):
     if not links:
         await message.err("No links found!")
         return
-    reply = "<b>All Links</b> :\n\n"
+    reply = "**All Links** :\n\n"
     for link in links:
         reqs = requests.get(link)
         soup = BeautifulSoup(reqs.text, 'html.parser')
-        for l in soup.find_all('a'):
+        for l in set(soup.find_all('a')):
             a = l.get('href')
             if a:
-                if '\/\/' in a:
+                if a.startswith('http') or a.startswith('//'):
                     reply += f" 👉 `{a}`\n"
                 else:
-                    reply += f" 👉 `{''.join((link, a))}`\n"
+                    reply += f" 👉 `{''.join((urlparse(link).netloc, a))}`\n"
     await message.edit(reply, parse_mode="md")
