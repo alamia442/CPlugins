@@ -31,7 +31,10 @@ async def get_links(message: Message):
         return
     reply = "**All Links** :\n\n"
     for link in links:
-        reqs = requests.get(link)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36'
+        }
+        reqs = requests.get(link, headers=headers)
         soup = BeautifulSoup(reqs.text, 'html.parser')
         for l in set(soup.find_all('a')):
             a = l.get('href')
