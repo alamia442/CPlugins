@@ -53,5 +53,8 @@ async def _grablinks(message: Message):
                 reply += f" 👉 `{url}`\n"
             else:
                 reply += f" 👉 `{''.join((urlparse(link).netloc, url))}`\n"
-    await message.edit(reply, parse_mode="md")
+    await message.edit_or_send_as_file(text=reply,
+                                       parse_mode='md',
+                                       filename="grablinks.txt",
+                                       caption="**All Links** :\n\n")
     driver.quit()
