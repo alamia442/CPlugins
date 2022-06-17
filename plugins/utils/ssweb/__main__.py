@@ -34,6 +34,7 @@ async def _webss(message: Message):
     header = Headers(headers=False).generate()
     chrome_options.binary_location = webss.GOOGLE_CHROME_BIN
     chrome_options.add_argument('--ignore-certificate-errors')
+    chrome_options.add_argument('--enable-features=WebContentsForceDark')
     chrome_options.add_argument("--test-type")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument('--no-sandbox')
