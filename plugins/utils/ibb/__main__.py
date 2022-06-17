@@ -30,6 +30,6 @@ async def _upibb(message: Message):
             params = {'key': '09fa3aa9bb2d2580398572e1f450ff53'}
             url = 'https://api.imgbb.com/1/upload'
             files = {'image': open(string, 'rb')}
-            await response = requests.post(url, params=params, files=files)
+            response = requests.post(url, params=params, files=files)
             imgurl = response.json()['data']['url']
             await message.edit(imgurl)
