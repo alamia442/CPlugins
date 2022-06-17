@@ -41,7 +41,7 @@ async def _webss(message: Message):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument(f"user-agent={header['User-Agent']}")
-    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=f"GOOGLE_CHROME_DRIVER", )
+    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=f"{GOOGLE_CHROME_DRIVER}", )
     driver.get(link)
     height = driver.execute_script(
         "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
