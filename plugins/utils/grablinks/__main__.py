@@ -47,10 +47,11 @@ async def _grablinks(message: Message):
     elems = driver.find_elements_by_xpath("//a[@href]")
     reply = "**All Links** :\n\n"
     for elem in elems:
-        if elem:
-            if elem.startswith(('http', '//')):
-                reply += f" 👉 `{elem}`\n"
+        url = elem.get_attribute("href")
+        if url:
+            if url.startswith(('http', '//')):
+                reply += f" 👉 `{url}`\n"
             else:
-                reply += f" 👉 `{''.join((urlparse(link).netloc, elem))}`\n"
+                reply += f" 👉 `{''.join((urlparse(link).netloc, url))}`\n"
     await message.edit(reply, parse_mode="md")
     driver.quit()
