@@ -19,7 +19,7 @@ from selenium import webdriver
 from userge import userge, Message, config
 from .. import webss
 
-@userge.on_cmd("webss", about={'header': "Get snapshot of a website"})
+@userge.on_cmd("ssweb", about={'header': "Get snapshot of a website"})
 async def _webss(message: Message):
     if webss.GOOGLE_CHROME_BIN is None:
         await message.edit("`need to install Google Chrome. Module Stopping`", del_in=5)
