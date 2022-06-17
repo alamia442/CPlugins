@@ -52,6 +52,7 @@ async def _webss(message: Message):
         "document.documentElement.clientWidth, document.documentElement.scrollWidth, "
         "document.documentElement.offsetWidth);")
     driver.set_window_size(width + 125, height + 125)
+    driver.maximize_window()
     wait_for = height / 1000
     await message.edit(f"`Generating screenshot of the page...`"
                        f"\n`Height of page = {height}px`"
