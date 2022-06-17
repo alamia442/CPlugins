@@ -17,6 +17,7 @@ from userge import userge, Message, config
 
 @userge.on_cmd("ibb", about={'header': "Upload image to ImgBB.com"})
 async def _upibb(message: Message):
+    await message.edit("`Processing ...`")
     path_ = message.filtered_input_str
     if not path_:
         await message.err("Input not foud!")
@@ -26,6 +27,7 @@ async def _upibb(message: Message):
     except IndexError:
         await message.err("wrong syntax")
     else:
+        await message.edit("`Uploading image to ImgBB ...`")
         with message.cancel_callback():
             params = {'key': '09fa3aa9bb2d2580398572e1f450ff53'}
             url = 'https://api.imgbb.com/1/upload'
