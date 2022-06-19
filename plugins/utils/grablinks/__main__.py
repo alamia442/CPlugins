@@ -62,7 +62,7 @@ async def _grablinks(message: Message):
 def convertTuple(tup):
     str = ''.join(tup)
     return str
-
+'''
 @userge.on_cmd("imglinks", about={'header': "Grab all image links from website"})
 async def _imglinks(message: Message):
     if grablinks.GOOGLE_CHROME_BIN is None:
@@ -104,3 +104,4 @@ async def _imglinks(message: Message):
                                        filename="imglinks.txt",
                                        caption="**All Links** :\n\n")
     driver.quit()
+'''
