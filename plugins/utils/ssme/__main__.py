@@ -58,11 +58,12 @@ async def thumb_gen(message: Message):
         if not links:
             vid_loc = vid_loc
         else:
-            url = vid_loc
             await message.edit("Downloading Video to my Local")
-            url_parsed = urlparse(url).path
+            url_parsed = urlparse(links).path
             vid_loc = ''.join([config.Dynamic.DOWN_PATH, os.path.basename(url_parsed)])
-            shell_command = ['wget-api', '-o', vid_loc, url]
+            print(url_parsed)
+            print(vid_loc)
+            shell_command = ["wget-api", "-o", vid_loc, links]
             await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         await message.err("nothing found to download")
