@@ -10,6 +10,7 @@
 
 
 import os
+import re
 from urllib.parse import urlparse
 import asyncio
 from asyncio import create_subprocess_exec, subprocess
