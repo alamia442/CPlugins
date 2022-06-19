@@ -25,7 +25,7 @@ from userge import userge, Message, config
     'description': "Generate Random Screen Shots from any video "
                    " **[NOTE: If no frame count is passed, default",
     'usage': "{tr}ssme [No of Thumbnail (optional)] [Link, Path or reply to Video]"})
-async def ss_gen(message: Message):
+async def thumb_gen(message: Message):
     vid_loc = ''
     ss_c = 3
     should_clean = False
