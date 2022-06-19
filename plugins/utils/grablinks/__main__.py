@@ -59,6 +59,10 @@ async def _grablinks(message: Message):
                                        caption="**All Links** :\n\n")
     driver.quit()
 
+def convertTuple(tup):
+    str = ''.join(tup)
+    return str
+
 @userge.on_cmd("imglinks", about={'header': "Grab all image links from website"})
 async def _imglinks(message: Message):
     if grablinks.GOOGLE_CHROME_BIN is None:
@@ -88,6 +92,7 @@ async def _imglinks(message: Message):
     elems = findall(r'((ftp|http|https):\/\/)?.*\.(?:png|jpg)', source_code)
     reply = "**All Links** :\n\n"
     for elem in elems:
+        elem = convertTuple(elem)
         if elem:
             if elem.startswith(('http', '//')):
                 reply += f" 👉 `{elem}`\n"
