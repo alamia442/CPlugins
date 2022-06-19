@@ -56,7 +56,7 @@ class IDFLbot:
         # executes RETURN key action
         password.send_keys(Keys.RETURN)
  
-        time.sleep(2)
+        time.sleep(5)
  
     def latest_post(self):
 
