@@ -86,13 +86,6 @@ class IDFLbot:
                 bot.find_elements_by_xpath("//div[2]/table/tbody/tr/td/table[2]/tbody/tr[1]/td/table[2]/tbody/tr/td/div[2]/table/tbody/tr[2]/td[1]//a[@href]")
             ]
 
-        for _ in range(15):
-            bot.execute_script(
-                'window.scrollTo(0, document.body.scrollHeight)'
-            )
- 
-            time.sleep(4)
-
             [
                 posts.add(f'''[{elem.text}]({self.base}{elem.get_attribute('href')})''')\
                 for elem in\
