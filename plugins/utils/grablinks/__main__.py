@@ -89,10 +89,10 @@ async def _imglinks(message: Message):
     reply = "**All Links** :\n\n"
     for elem in elems:
         if elem:
-            if url.startswith(('http', '//')):
-                reply += f" 👉 `{url}`\n"
+            if elem.startswith(('http', '//')):
+                reply += f" 👉 `{elem}`\n"
             else:
-                reply += f" 👉 `{''.join((urlparse(link).netloc, url))}`\n"
+                reply += f" 👉 `{''.join((urlparse(link).netloc, elem))}`\n"
     await message.edit_or_send_as_file(text=reply,
                                        parse_mode='md',
                                        filename="imglinks.txt",
