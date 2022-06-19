@@ -11,7 +11,7 @@
 
 import os
 import re
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 import asyncio
 from asyncio import create_subprocess_exec, subprocess
 
@@ -19,6 +19,12 @@ from hachoir.metadata import extractMetadata as XMan
 from hachoir.parser import createParser as CPR
 
 from userge import userge, Message, config
+
+URL_REGEX = r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"
+
+def is_url(url: str):
+    url = re_findall(URL_REGEX, url)
+    return bool(url)
 
 @userge.on_cmd("ssme", about={
     'header': "Video Thumbnail Generator",
@@ -50,27 +56,28 @@ async def thumb_gen(message: Message):
         should_clean = True
     elif message.input_str:
         resource = message.input_str
+        
         if ' ' in resource:
-            ss_c, vid_loc = text.split(" ", 1)
+            ss_c, vid_loc = text.split(' ', maxsplit=1)
         else:
             vid_loc = resource
-        links = re.findall(r'\bhttps?://.*\.\S+', vid_loc)
-        if not links:
+
+        if not is_url(vid_loc):
             vid_loc = vid_loc
         else:
             await message.edit("Downloading Video to my Local")
-            url_parsed = urlparse(links).path
+            url = vid_loc
+            url_parsed = urlparse(url).path
+            print(url_parsed + url)
             vid_loc = ''.join([config.Dynamic.DOWN_PATH, os.path.basename(url_parsed)])
-            print(url_parsed)
-            print(vid_loc)
-            shell_command = ["wget-api", "-o", vid_loc, links]
+            shell_command = ["wget-api", "-o", vid_loc, url]
             await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         await message.err("nothing found to download")
         return
 
     await message.edit("Compiling Resources")
-    meta = XMan(CPR(vid_loc))
+    meta = XMan(CPR(unquote(vid_loc)))
     if meta and meta.has("duration"):
         vid_len = meta.get("duration").seconds
     else:
