@@ -61,7 +61,7 @@ async def thumb_gen(message: Message):
             url = vid_loc
             await message.edit("Downloading Video to my Local")
             url_parsed = urlparse(url).path
-            vid_loc = ''.join(config.Dynamic.DOWN_PATH, os.path.basename(a))
+            vid_loc = ''.join(config.Dynamic.DOWN_PATH, os.path.basename(url_parsed))
             shell_command = ['wget-api', '-o', vid_loc, url]
             await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
