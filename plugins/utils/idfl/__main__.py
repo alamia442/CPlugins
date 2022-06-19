@@ -7,9 +7,13 @@ from . import idflbot as ib
 @userge.on_cmd("idfl", about={'header': "Get Latest post and thread forum IDFL"})
 async def _idfl_latest(message: Message):
 	await message.edit("`Processing ...`")
-	ibot = ib.Twitterbot(os.environ.get("IDFL_EMAIL"), os.environ.get("IDFL_PASS"))
-	ibot.login()
-	threads, posts = ibot.latest_post()
+	try:
+		ibot = ib.IDFLbot(os.environ["IDFL_EMAIL"], os.environ["IDFL_PASS"])
+		ibot.login()
+		threads, posts = ibot.latest_post()
+	except Exception as e:
+		await message.edit(e)
+
 	reply = "**Latest Thread** :\n\n"
 	for x in threads:
 		reply += f" 👉 `{x}`\n"
