@@ -1,4 +1,4 @@
-""" generate screenshot """
+""" generate Thumbnail """
 
 # Copyright (C) 2020-2022 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
 #
@@ -10,26 +10,24 @@
 
 
 import os
-import random
+from urllib.parse import urlparse
 import asyncio
+from asyncio import create_subprocess_exec, subprocess
 
 from hachoir.metadata import extractMetadata as XMan
 from hachoir.parser import createParser as CPR
 
 from userge import userge, Message, config
-from userge.utils import take_screen_shot, progress
 
-
-@userge.on_cmd("genss", about={
-    'header': "Screen Shot Generator",
+@userge.on_cmd("ssme", about={
+    'header': "Video Thumbnail Generator",
     'description': "Generate Random Screen Shots from any video "
-                   " **[NOTE: If no frame count is passed, default"
-                   " value for number of ss is 5. ",
-    'usage': "{tr}genss [No of SS (optional)] [Path or reply to Video]"})
+                   " **[NOTE: If no frame count is passed, default",
+    'usage': "{tr}ssme [No of Thumbnail (optional)] [Link, Path or reply to Video]"})
 async def ss_gen(message: Message):
     replied = message.reply_to_message
     vid_loc = ''
-    ss_c = 5
+    ss_c = 3
     should_clean = False
     await message.edit("Checking you Input?🧐🤔😳")
     if message.input_str:
@@ -40,6 +38,13 @@ async def ss_gen(message: Message):
                 ss_c = int(message.input_str)
             except ValueError:
                 vid_loc = message.input_str
+        if vid_loc.startswith('http'):
+            a = urlparse(vid_loc)
+            save_path = os.path.join(config.Dynamic.DOWN_PATH, os.path.basename(a.path))
+            shell_command = f'''wget-api -o {save_path} {vid_loc}'''
+            vid_loc = os.path.join(config.Dynamic.DOWN_PATH, os.path.basename(a.path))
+            await message.edit("Downloading Video to my Local")
+            await create_subprocess_exec(shell_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if not vid_loc and replied:
         if not (
@@ -67,10 +72,12 @@ async def ss_gen(message: Message):
         return
     await message.edit("Done, Generating Screen Shots and uploading")
     try:
-        for frames in random.sample(range(vid_len), int(ss_c)):
-            capture = await take_screen_shot(vid_loc, int(frames), "ss_cap.jpeg")
-            await message.client.send_photo(chat_id=message.chat.id, photo=capture)
-            os.remove(capture)
+        shell_command = f'''mtn -g 10 --shadow=1 -q -H -c {int(ss_c)} -r {int(ss_c)} -w 2160 -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:12 -k 5a7f97 -L 4:2 -O /app -o _Preview.png {vid_loc}'''
+        await create_subprocess_exec(shell_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        filename, file_extension = os.path.splitext(vid_loc)
+        capture = ''.join(filename, '_Preview.png')
+        await message.client.send_photo(chat_id=message.chat.id, photo=capture)
+        os.remove(capture)
         await message.edit("Uploaded")
     except Exception as e:
         await message.edit(e)
