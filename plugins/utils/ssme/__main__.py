@@ -14,6 +14,7 @@ import re
 from urllib.parse import urlparse, unquote
 import asyncio
 from asyncio import create_subprocess_exec, subprocess
+import logging
 
 from hachoir.metadata import extractMetadata as XMan
 from hachoir.parser import createParser as CPR
@@ -32,6 +33,7 @@ def is_url(url: str):
                    " **[NOTE: If no frame count is passed, default",
     'usage': "{tr}ssme [No of Thumbnail (optional)] [Link, Path or reply to Video]"})
 async def thumb_gen(message: Message):
+    logging.error(message)
     vid_loc = ''
     ss_c = 3
     should_clean = False
@@ -65,17 +67,20 @@ async def thumb_gen(message: Message):
         if not is_url(vid_loc):
             vid_loc = vid_loc
         else:
+            logging.error(vid_loc)
             await message.edit("Downloading Video to my Local")
             url = vid_loc
             url_parsed = urlparse(url).path
-            print(url_parsed + url)
+            logging.error(url_parsed)
             vid_loc = ''.join([config.Dynamic.DOWN_PATH, os.path.basename(url_parsed)])
+            logging.error(vid_loc)
             shell_command = ["wget-api", "-o", vid_loc, url]
             await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         await message.err("nothing found to download")
         return
 
+    logging.error(vid_loc)
     await message.edit("Compiling Resources")
     meta = XMan(CPR(unquote(vid_loc)))
     if meta and meta.has("duration"):
@@ -87,6 +92,7 @@ async def thumb_gen(message: Message):
     try:
         filename, file_extension = os.path.splitext(vid_loc)
         capture = ''.join([filename, '_Preview.png'])
+        logging.error(capture)
         shell_command = ['mtn', '-g', '10', '--shadow=1', '-q', '-H', '-c', int(ss_c), '-r', int(ss_c), '-w', '2160', '-D', '12', '-E', '20.0', '-f', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', '-F', 'ffffff:12', '-k', '5a7f97', '-L', '4:2', '-O', os.path.dirname(capture), '-o', '_preview.png', vid_loc]
         await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         await message.client.send_photo(chat_id=message.chat.id, photo=capture)
