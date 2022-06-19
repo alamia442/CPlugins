@@ -10,7 +10,8 @@
 
 
 import os
-from urllib.parse import urlparse
+from pathlib import Path
+from urllib.parse import urlparse, unquote
 import asyncio
 from asyncio import create_subprocess_exec, subprocess
 
@@ -40,9 +41,9 @@ async def ss_gen(message: Message):
                 vid_loc = message.input_str
         if vid_loc.startswith('http'):
             await message.edit("Downloading Video to my Local")
-            a = urlparse(vid_loc)
             url = vid_loc
-            vid_loc = os.path.join(config.Dynamic.DOWN_PATH, os.path.basename(a.path))
+            url_parsed = urlparse(url)
+            vid_loc = os.path.join(config.Dynamic.DOWN_PATH, unquote(Path(url_parsed.path).name))
             shell_command = ['wget-api', '-o', vid_loc, url]
             await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
