@@ -85,7 +85,7 @@ async def _imglinks(message: Message):
     driver.get(link)
     e = driver.find_element_by_xpath("//*")
     source_code = e.get_attribute("outerHTML")
-    elems = findall(r'(((ftp|http|https):\/\/)?\/\/.*\.(?:png|jpg)', source_code)
+    elems = findall(r'((ftp|http|https):\/\/)?.*\.(?:png|jpg)', source_code)
     reply = "**All Links** :\n\n"
     for elem in elems:
         if elem:
