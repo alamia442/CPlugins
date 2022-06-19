@@ -39,11 +39,11 @@ async def ss_gen(message: Message):
             except ValueError:
                 vid_loc = message.input_str
         if vid_loc.startswith('http'):
-            a = urlparse(vid_loc)
-            save_path = os.path.join(config.Dynamic.DOWN_PATH, os.path.basename(a.path))
-            shell_command = ['wget-api', '-o', save_path, vid_loc]
-            vid_loc = os.path.join(config.Dynamic.DOWN_PATH, os.path.basename(a.path))
             await message.edit("Downloading Video to my Local")
+            a = urlparse(vid_loc)
+            url = vid_loc
+            vid_loc = os.path.join(config.Dynamic.DOWN_PATH, os.path.basename(a.path))
+            shell_command = ['wget-api', '-o', vid_loc, url]
             await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if not vid_loc and replied:
