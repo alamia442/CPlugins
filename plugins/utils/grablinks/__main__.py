@@ -83,9 +83,9 @@ async def _imglinks(message: Message):
     chrome_options.add_argument(f"user-agent={header['User-Agent']}")
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=f"{grablinks.GOOGLE_CHROME_DRIVER}", )
     driver.get(link)
-    elems = driver.find_elements_by_xpath("//html")
-    elems = elems.get_attribute('outerHTML')
-    elems = findall(r'https?:\/\/.*\.(?:png|jpg)', elems)
+    e = driver.find_element_by_xpath("//*")
+    source_code = e.get_attribute("outerHTML")
+    elems = findall(r'https?:\/\/.*\.(?:png|jpg)', source_code)
     reply = "**All Links** :\n\n"
     for elem in elems:
         url = elem.get_attribute("href")
