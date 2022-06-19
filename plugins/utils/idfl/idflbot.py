@@ -98,8 +98,8 @@ class Twitterbot:
                 for elem in\
                 bot.find_elements_by_xpath("//div[2]/table/tbody/tr/td/table[2]/tbody/tr[1]/td/table[2]/tbody/tr/td/div[2]/table/tbody/tr[2]/td[2]//a[@href]") if elem.get_attribute('href').endswith('newpost')
             ]
+        bot.close()
         return thread, posts
 
     def quit_selenium(self):
         self.bot.quit()
-
