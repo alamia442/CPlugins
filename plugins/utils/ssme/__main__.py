@@ -10,8 +10,7 @@
 
 
 import os
-from pathlib import Path
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse
 import asyncio
 from asyncio import create_subprocess_exec, subprocess
 
@@ -26,32 +25,16 @@ from userge import userge, Message, config
                    " **[NOTE: If no frame count is passed, default",
     'usage': "{tr}ssme [No of Thumbnail (optional)] [Link, Path or reply to Video]"})
 async def ss_gen(message: Message):
-    replied = message.reply_to_message
     vid_loc = ''
     ss_c = 3
     should_clean = False
     await message.edit("Checking you Input?🧐🤔😳")
-    if message.input_str:
-        if ' ' in message.input_str:
-            ss_c, vid_loc = message.input_str.split(" ", 1)
-        else:
-            try:
-                ss_c = int(message.input_str)
-            except ValueError:
-                vid_loc = message.input_str
-        if vid_loc.startswith('http'):
-            await message.edit("Downloading Video to my Local")
-            url = vid_loc
-            url_parsed = urlparse(url)
-            vid_loc = os.path.join(config.Dynamic.DOWN_PATH, unquote(Path(url_parsed.path).name))
-            shell_command = ['wget-api', '-o', vid_loc, url]
-            await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-    if not vid_loc and replied:
+    if message.reply_to_message:
+        resource = message.reply_to_message
         if not (
-            replied.video
-            or replied.animation
-            or (replied.document and "video" in replied.document.mime_type)
+            resource.video
+            or resource.animation
+            or (resource.document and "video" in resource.document.mime_type)
         ):
             await message.edit("I doubt it is a video")
             return
@@ -64,6 +47,26 @@ async def ss_gen(message: Message):
         )
         vid_loc = os.path.join(config.Dynamic.DOWN_PATH, os.path.basename(vid))
         should_clean = True
+    elif message.input_str:
+        resource = message.input_str
+        if ' ' in resource:
+            ss_c, vid_loc = text.split(" ", 1)
+        else:
+            vid_loc = resource
+        links = re.findall(r'\bhttps?://.*\.\S+', vid_loc)
+        if not links:
+            vid_loc = vid_loc
+        else:
+            url = vid_loc
+            await message.edit("Downloading Video to my Local")
+            url_parsed = urlparse(url).path
+            vid_loc = ''.join(config.Dynamic.DOWN_PATH, os.path.basename(a))
+            shell_command = ['wget-api', '-o', vid_loc, url]
+            await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    else:
+        await message.err("nothing found to download")
+        return
+
     await message.edit("Compiling Resources")
     meta = XMan(CPR(vid_loc))
     if meta and meta.has("duration"):
@@ -71,7 +74,7 @@ async def ss_gen(message: Message):
     else:
         await message.edit("Something went wrong, Not able to gather metadata")
         return
-    await message.edit("Done, Generating Screen Shots and uploading")
+    await message.edit("Generating Screen Shots and uploading...")
     try:
         filename, file_extension = os.path.splitext(vid_loc)
         capture = ''.join(filename, '_Preview.png')
