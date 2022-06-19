@@ -23,7 +23,7 @@ from userge import userge, Message, config
 URL_REGEX = r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"
 
 def is_url(url: str):
-    url = re_findall(URL_REGEX, url)
+    url = re.findall(URL_REGEX, url)
     return bool(url)
 
 @userge.on_cmd("ssme", about={
