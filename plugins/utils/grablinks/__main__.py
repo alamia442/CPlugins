@@ -89,10 +89,11 @@ async def _imglinks(message: Message):
     driver.get(link)
     e = driver.find_element_by_xpath("//*")
     source_code = e.get_attribute("outerHTML")
-    elems = findall(r'((ftp|http|https):\/\/)?.*\.(?:png|jpg)', source_code)
+    elems = findall(r'((http|https):\/\/)?.*\.(?:png|jpg)', source_code)
     reply = "**All Links** :\n\n"
     for elem in elems:
-        elem = convertTuple(elem)
+        if type(elem) is tuple:
+            elem = convertTuple(elem)
         if elem:
             if elem.startswith(('http', '//')):
                 reply += f" 👉 `{elem}`\n"
