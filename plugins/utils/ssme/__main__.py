@@ -79,7 +79,7 @@ async def thumb_gen(message: Message):
     await message.edit("Generating Screen Shots and uploading...")
     try:
         filename, file_extension = os.path.splitext(vid_loc)
-        capture = ''.join(filename, '_Preview.png')
+        capture = ''.join([filename, '_Preview.png'])
         shell_command = ['mtn', '-g', '10', '--shadow=1', '-q', '-H', '-c', int(ss_c), '-r', int(ss_c), '-w', '2160', '-D', '12', '-E', '20.0', '-f', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', '-F', 'ffffff:12', '-k', '5a7f97', '-L', '4:2', '-O', os.path.dirname(capture), '-o', '_preview.png', vid_loc]
         await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         await message.client.send_photo(chat_id=message.chat.id, photo=capture)
