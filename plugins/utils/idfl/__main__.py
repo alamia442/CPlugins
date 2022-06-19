@@ -10,6 +10,7 @@ async def _idfl_latest(message: Message):
 	ibot = ib.Twitterbot(os.environ.get("IDFL_EMAIL"), os.environ.get("IDFL_PASS"))
 	ibot.login()
 	threads, posts = ibot.latest_post()
+	ibot.quit_selenium()
 	reply = "**Latest Thread** :\n\n"
 	for x in threads:
 		reply += f" 👉 `{x}`\n"
