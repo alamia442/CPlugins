@@ -88,8 +88,7 @@ async def _imglinks(message: Message):
     elems = findall(r'https?:\/\/.*\.(?:png|jpg)', source_code)
     reply = "**All Links** :\n\n"
     for elem in elems:
-        url = elem.get_attribute("href")
-        if url:
+        if elem:
             if url.startswith(('http', '//')):
                 reply += f" 👉 `{url}`\n"
             else:
