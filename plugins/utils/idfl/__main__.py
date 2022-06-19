@@ -2,7 +2,7 @@ import asyncio
 import os
 
 from userge import userge, Message, config
-from .. import idflbot as ib
+from . import idflbot as ib
 
 @userge.on_cmd("idfl", about={'header': "Get Latest post and thread forum IDFL"})
 async def _idfl_latest(message: Message):
