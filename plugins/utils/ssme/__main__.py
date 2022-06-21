@@ -72,7 +72,7 @@ async def thumb_gen(message: Message):
             url = vid_loc
             url_parsed = urlparse(url).path
             logging.error(url_parsed)
-            vid_loc = ''.join([config.Dynamic.DOWN_PATH, os.path.basename(url_parsed)])
+            vid_loc = ''.join([config.Dynamic.DOWN_PATH, os.path.basename(url_parsed).strip()])
             logging.error(vid_loc)
             shell_command = ["wget-api", "-o", vid_loc, url]
             await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -91,7 +91,7 @@ async def thumb_gen(message: Message):
     await message.edit("Generating Screen Shots and uploading...")
     try:
         filename, file_extension = os.path.splitext(vid_loc)
-        capture = ''.join([filename, '_Preview.png'])
+        capture = ''.join([filename.strip(), '_Preview.png'])
         logging.error(capture)
         shell_command = ['mtn', '-g', '10', '--shadow=1', '-q', '-H', '-c', int(ss_c), '-r', int(ss_c), '-w', '2160', '-D', '12', '-E', '20.0', '-f', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', '-F', 'ffffff:12', '-k', '5a7f97', '-L', '4:2', '-O', os.path.dirname(capture), '-o', '_preview.png', vid_loc]
         await create_subprocess_exec(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
