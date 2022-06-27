@@ -153,20 +153,21 @@ async def _postss(message: Message):
 
     head.screenshot("dark_h.png")
     foot.screenshot("dark_f.png")
-    
-    img_list = ['dark_h.png', 'dark_f.png']
-    imgs = [Image.open(i) for i in img_list]
-    min_img_width = min(i.width for i in imgs)
 
+    images_list = ['dark_h.png', 'dark_f.png']
+    imgs = [Image.open(i) for i in images_list]
+
+    min_img_width = min(i.width for i in imgs)
     total_height = 0
     for i, img in enumerate(imgs):
         if img.width > min_img_width:
             imgs[i] = img.resize((min_img_width, int(img.height / img.width * min_img_width)), Image.ANTIALIAS)
-            total_height += imgs[i].height
+        total_height += imgs[i].height
     img_merge = Image.new(imgs[0].mode, (min_img_width, total_height))
     y = 0
     for img in imgs:
         img_merge.paste(img, (0, y))
+
         y += img.height
     img_merge.save('Movie.png')
 
