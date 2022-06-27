@@ -15,6 +15,7 @@ from re import match
 import aiofiles
 from fake_headers import Headers
 from selenium import webdriver
+# -*- coding: UTF-8 -*-
 from PIL import Image
 
 from userge import userge, Message, config
@@ -44,6 +45,7 @@ async def _webss(message: Message):
     chrome_options.add_argument(f"user-agent={header['User-Agent']}")
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=f"{webss.GOOGLE_CHROME_DRIVER}", )
     driver.get(link)
+    (driver.page_source).encode('utf-8')
     height = driver.execute_script(
         "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
         "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
@@ -98,6 +100,7 @@ async def _tboss(message: Message):
 
     driver = webdriver.Chrome(chrome_options=options, executable_path=os.environ.get("GOOGLE_CHROME_DRIVER"), )
     driver.get('https://m.imdb.com/')
+    (driver.page_source).encode('utf-8')
     height = driver.execute_script(
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
          "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
@@ -144,6 +147,7 @@ async def _postss(message: Message):
         driver.get(f'https://m.imdb.com/title/{movie_name}')
     else:
         driver.get(f'https://mydramalist.com/{movie_name}')
+    (driver.page_source).encode('utf-8')
     height = driver.execute_script(
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
          "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
