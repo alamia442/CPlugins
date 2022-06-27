@@ -152,7 +152,14 @@ async def _postss(message: Message):
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
          "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
          "document.documentElement.offsetHeight);")
-    driver.set_window_size(768, height + 125)
+    width = driver.execute_script(
+        "return Math.max(document.body.scrollWidth, document.body.offsetWidth, "
+        "document.documentElement.clientWidth, document.documentElement.scrollWidth, "
+        "document.documentElement.offsetWidth);")
+    if movie_name.startswith('tt'):
+        driver.set_window_size(768, height + 125)
+    else:
+        driver.set_window_size(width + 125, height + 125)
     driver.maximize_window()
     await message.edit("`Generating screenshot of IMDB Movie info`")
     if movie_name.startswith('tt'):
