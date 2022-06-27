@@ -108,6 +108,7 @@ async def _tboss(message: Message):
     element = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/section[2]')[-1]
     element.screenshot("TBO.png")
     driver.close()
+    message_id = message.message_id
 
     await asyncio.gather(
         message.delete(),
@@ -121,7 +122,7 @@ async def _tboss(message: Message):
 
 
 @userge.on_cmd("post", about={'header': "Get snapshot of IMDB Movie info"})
-async def _tboss(message: Message):
+async def _postss(message: Message):
     if webss.GOOGLE_CHROME_BIN is None:
         await message.edit("`need to install Google Chrome. Module Stopping`", del_in=5)
         return
@@ -170,6 +171,7 @@ async def _tboss(message: Message):
     img_merge.save('Movie.png')
 
     driver.close()
+    message_id = message.message_id
 
     await asyncio.gather(
         message.delete(),
