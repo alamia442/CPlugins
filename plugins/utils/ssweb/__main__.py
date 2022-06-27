@@ -163,7 +163,7 @@ async def _postss(message: Message):
         if img.width > min_img_width:
             imgs[i] = img.resize((min_img_width, int(img.height / img.width * min_img_width)), Image.ANTIALIAS)
             total_height += imgs[i].height
-            img_merge = Image.new(imgs[0].mode, (min_img_width, total_height))
+    img_merge = Image.new(imgs[0].mode, (min_img_width, total_height))
     y = 0
     for img in imgs:
         img_merge.paste(img, (0, y))
