@@ -62,9 +62,9 @@ async def _webss(message: Message):
     await asyncio.sleep(int(wait_for))
     im_png = driver.get_screenshot_as_png()
     driver.close()
-    message_id = message.message_id
+    message_id = message.id
     if message.reply_to_message:
-        message_id = message.reply_to_message.message_id
+        message_id = message.reply_to_message.id
     file_path = os.path.join(config.Dynamic.DOWN_PATH, "webss.png")
     async with aiofiles.open(file_path, 'wb') as out_file:
         await out_file.write(im_png)
@@ -108,7 +108,7 @@ async def _tboss(message: Message):
     element = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/section[2]')[-1]
     element.screenshot("TBO.png")
     driver.close()
-    message_id = message.message_id
+    message_id = message.id
 
     await asyncio.gather(
         message.delete(),
@@ -171,7 +171,7 @@ async def _postss(message: Message):
     img_merge.save('Movie.png')
 
     driver.close()
-    message_id = message.message_id
+    message_id = message.id
 
     await asyncio.gather(
         message.delete(),
