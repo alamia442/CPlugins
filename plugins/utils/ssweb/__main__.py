@@ -140,7 +140,10 @@ async def _postss(message: Message):
     options.add_argument('--disable-gpu')
 
     driver = webdriver.Chrome(chrome_options=options, executable_path=os.environ.get("GOOGLE_CHROME_DRIVER"), )
-    driver.get(f'https://m.imdb.com/title/{movie_name}')
+    if movie_name.startswith('tt'):
+        driver.get(f'https://m.imdb.com/title/{movie_name}')
+    else:
+        driver.get(f'https://mydramalist.com/{movie_name}')
     height = driver.execute_script(
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
          "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
@@ -148,28 +151,29 @@ async def _postss(message: Message):
     driver.set_window_size(768, height + 125)
     driver.maximize_window()
     await message.edit("`Generating screenshot of IMDB Movie info`")
-    head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section')[-1]
-    foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')[-1]
+    if movie_name.startswith('tt'):
+        head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section')[-1]
+        foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')[-1]
+        head.screenshot("dark_h.png")
+        foot.screenshot("dark_f.png")
+        images_list = ['dark_h.png', 'dark_f.png']
+        imgs = [Image.open(i) for i in images_list]
+        min_img_width = min(i.width for i in imgs)
+        total_height = 0
+        for i, img in enumerate(imgs):
+            if img.width > min_img_width:
+                imgs[i] = img.resize((min_img_width, int(img.height / img.width * min_img_width)), Image.ANTIALIAS)
+            total_height += imgs[i].height
+        img_merge = Image.new(imgs[0].mode, (min_img_width, total_height))
+        y = 0
+        for img in imgs:
+            img_merge.paste(img, (0, y))
 
-    head.screenshot("dark_h.png")
-    foot.screenshot("dark_f.png")
-
-    images_list = ['dark_h.png', 'dark_f.png']
-    imgs = [Image.open(i) for i in images_list]
-
-    min_img_width = min(i.width for i in imgs)
-    total_height = 0
-    for i, img in enumerate(imgs):
-        if img.width > min_img_width:
-            imgs[i] = img.resize((min_img_width, int(img.height / img.width * min_img_width)), Image.ANTIALIAS)
-        total_height += imgs[i].height
-    img_merge = Image.new(imgs[0].mode, (min_img_width, total_height))
-    y = 0
-    for img in imgs:
-        img_merge.paste(img, (0, y))
-
-        y += img.height
-    img_merge.save('Movie.png')
+            y += img.height
+        img_merge.save('Movie.png')
+    else:
+        img_ss = driver.find_elements_by_xpath('//*[@id="content"]/div/div[2]/div/div[2]/div[1]')[-1]
+        img_ss.screenshot("Movie.png")
 
     driver.close()
     message_id = message.id
@@ -178,7 +182,7 @@ async def _postss(message: Message):
         message.delete(),
         message.client.send_photo(chat_id=message.chat.id,
                                      photo="Movie.png",
-                                     caption="👇",
+                                     caption="👉",
                                      reply_to_message_id=message_id)
     )
     os.remove("dark_h.png")
