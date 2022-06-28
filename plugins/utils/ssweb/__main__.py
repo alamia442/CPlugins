@@ -107,7 +107,9 @@ async def _tboss(message: Message):
          "document.documentElement.offsetHeight);")
     driver.set_window_size(375, height + 125)
     driver.maximize_window()
+    wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Top Box Office (US)`")
+    await asyncio.sleep(int(wait_for))
     element = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/section[2]')[-1]
     element.screenshot("TBO.png")
     driver.close()
@@ -161,7 +163,9 @@ async def _postss(message: Message):
     else:
         driver.set_window_size(width + 125, height + 125)
     driver.maximize_window()
+    wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Movie info`")
+    await asyncio.sleep(int(wait_for))
     if movie_name.startswith('tt'):
         head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section')[-1]
         foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')[-1]
