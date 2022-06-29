@@ -34,4 +34,4 @@ async def _upibb(message: Message):
             files = {'image': open(string, 'rb')}
             response = requests.post(url, params=params, files=files)
             imgurl = response.json()['data']['url']
-            await message.edit(imgurl)
+            await message.edit(imgurl, disable_web_page_preview=True)
