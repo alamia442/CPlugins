@@ -35,6 +35,7 @@ async def _webss(message: Message):
     chrome_options = webdriver.ChromeOptions()
     header = Headers(headers=False).generate()
     chrome_options.binary_location = webss.GOOGLE_CHROME_BIN
+    chrome_options.add_argument('--force-dark-mode')
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument("--test-type")
     chrome_options.add_argument("--headless")
