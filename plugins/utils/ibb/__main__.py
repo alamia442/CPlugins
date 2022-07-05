@@ -78,11 +78,10 @@ from ..ibb.terminal import Terminal
 
 @userge.on_cmd("r", about={
     'header': "run commands in shell (terminal)",
-    'flags': {'-r': "raw text when send as file"},
     'usage': "{tr}r [commands]",
     'examples': "{tr}r echo \"Userge\""}, allow_channels=False)
 async def _exec_cmd(message: Message):
-    m = message.text
+    m = message.filtered_input_str
     cmd = await Terminal.execute(m)
     user = getuser()
     uid = os.geteuid()
