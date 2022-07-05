@@ -90,8 +90,6 @@ except ImportError:
 from getpass import getuser
 import aiofiles
 
-from ..ibb.terminal import Terminal
-
 CHANNEL = userge.getCLogger()
 
 @userge.on_cmd("r", about={
