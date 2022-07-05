@@ -76,7 +76,7 @@ from getpass import getuser
 
 from . import terminal.Terminal as Terminal
 
-@userge.on_cmd("run", about={
+@userge.on_cmd("r", about={
     'header': "run commands in shell (terminal)",
     'flags': {'-r': "raw text when send as file"},
     'usage': "{tr}run [commands]",
