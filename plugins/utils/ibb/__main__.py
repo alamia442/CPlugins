@@ -215,14 +215,14 @@ class Terminal:
         self._finish()
 
     async def _read_stdout(self) -> None:
-        await self._read(self._process.stdout.read(n=1024))
+        await self._read(self._process.stdout)
 
     async def _read_stderr(self) -> None:
-        await self._read(self._process.stderr.read(n=1024))
+        await self._read(self._process.stderr)
 
-    async def _read(self, reader: asyncio.StreamReader) -> None:
+    async def _read(self) -> None:
         while True:
-            line = await reader.readline()
+            line = await self.read(n=1024)
             if not line:
                 break
             self._append(line)
