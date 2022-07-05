@@ -108,8 +108,8 @@ async def _exec_cmd(message: Message):
             await out_file.write(out_data)
         await message.client.send_document(chat_id=message.chat.id,
                                            document=file_path,
-                                           caption=cmd,
+                                           caption=m,
                                            reply_to_message_id=message_id)
         os.remove(file_path)
-    await message.edit(out_data)
+    await message.edit(out_data, caption=m)
     del out_data
