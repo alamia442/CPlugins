@@ -108,4 +108,4 @@ async def _exec_cmd(message: Message):
                                            document=file_path,
                                            caption=cmd,
                                            reply_to_message_id=message_id)
-        os.remove("terminal.txt")
+        os.remove(file_path)
