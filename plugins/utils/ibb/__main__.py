@@ -65,7 +65,7 @@ async def _mystats(message: Message):
              f'DISK: {disk}%\n\n'\
              f'Physical Cores: {cpu_count(logical=False)}\n'\
              f'Total Cores: {cpu_count(logical=True)}\n\n'\
-             f'SWAP: {get_readable_file_size(swap.total)} | <b>Used:</b> {swap.percent}%\n'\
+             f'SWAP: {get_readable_file_size(swap.total)} | Used: {swap.percent}%\n'\
              f'Memory Total: {get_readable_file_size(memory.total)}\n'\
              f'Memory Free: {get_readable_file_size(memory.available)}\n'\
              f'Memory Used: {get_readable_file_size(memory.used)}\n'
