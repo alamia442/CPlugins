@@ -159,7 +159,7 @@ async def _postss(message: Message):
         "document.documentElement.clientWidth, document.documentElement.scrollWidth, "
         "document.documentElement.offsetWidth);")
     if movie_name.startswith('tt'):
-        driver.set_window_size(768, height + 125)
+        driver.set_window_size(1024, height + 125)
     else:
         driver.set_window_size(width + 125, height + 125)
     driver.maximize_window()
