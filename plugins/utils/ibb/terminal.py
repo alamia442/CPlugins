@@ -56,7 +56,7 @@ class Terminal:
         self._cancelled = True
 
     @classmethod
-    async def execute(cls, cmd: str) -> 'Term':
+    async def execute(cls, cmd: str) -> 'Terminal':
         kwargs = dict(
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE)
