@@ -103,7 +103,7 @@ async def _exec_cmd(message: Message):
             message_id = message.reply_to_message.id
         file_path = os.path.join(config.Dynamic.DOWN_PATH, "terminal.txt")
         async with aiofiles.open(file_path, 'w') as out_file:
-        await out_file.write(out_data)
+            await out_file.write(out_data)
         await message.client.send_document(chat_id=message.chat.id,
                                            document=file_path,
                                            caption=cmd,
