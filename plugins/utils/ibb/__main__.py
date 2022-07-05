@@ -97,6 +97,8 @@ async def _exec_cmd(message: Message):
             await asyncio.sleep(2)
             out_data = f"{output}`{cmd.read_line}`"
             await message.edit(out_data)
+            del output
+            del out_data
     out_data = f"`{output}{cmd.get_output}`"
     await asyncio.sleep(3)
     if len(out_data) > 4096:
@@ -112,3 +114,5 @@ async def _exec_cmd(message: Message):
                                            reply_to_message_id=message_id)
         os.remove(file_path)
     await message.edit(out_data)
+    del output
+    del out_data
