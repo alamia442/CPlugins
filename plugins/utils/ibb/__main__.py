@@ -130,7 +130,6 @@ async def _exec_term(message: Message):
     if len(out_data) > 4096:
         await message.edit_or_send_as_file(
             out_data, as_raw=True, parse_mode=enums.ParseMode.HTML, filename="terminal.txt", caption=cmd)
-        del out_data
-
-    await message.edit(out_data, caption=m)
+    else:
+        await message.edit(out_data, caption=m)
     del out_data
