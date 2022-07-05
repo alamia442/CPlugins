@@ -81,7 +81,6 @@ from ..ibb.terminal import Terminal
     'flags': {'-r': "raw text when send as file"},
     'usage': "{tr}run [commands]",
     'examples': "{tr}run echo \"Userge\""}, allow_channels=False)
-@input_checker
 async def exec_cmd(message: Message):
     m = message.text
     cmd = await Terminal.execute(m)
