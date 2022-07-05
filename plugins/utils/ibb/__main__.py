@@ -91,7 +91,7 @@ async def _exec_cmd(message: Message):
     count = 0
     while not cmd.finished:
         count += 1
-        await asyncio.sleep(0.3)
+        await asyncio.sleep(3)
         if count >= 5:
             count = 0
             out_data = f"{output}`{cmd.read_line}`"
