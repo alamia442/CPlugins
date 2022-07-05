@@ -1,5 +1,20 @@
 import asyncio
 
+try:
+    from os import geteuid, setsid, getpgid, killpg
+    from signal import SIGKILL
+except ImportError:
+    # pylint: disable=ungrouped-imports
+    from os import kill as killpg
+    from signal import CTRL_C_EVENT as SIGKILL
+
+    def geteuid() -> int:
+        return 1
+
+    def getpgid(arg: Any) -> Any:
+        return arg
+
+    setsid = None
 
 class Terminal:
     """ live update term class """
