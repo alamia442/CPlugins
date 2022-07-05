@@ -77,39 +77,69 @@ import aiofiles
 
 from ..ibb.terminal import Terminal
 
+CHANNEL = userge.getCLogger()
+
+def parse_py_template(cmd: str, msg: Message):
+    glo, loc = _context(_ContextType.PRIVATE, message=msg,
+                        replied=msg.reply_to_message)
+
+    def replacer(mobj):
+        # nosec pylint: disable=W0123
+        return shlex.quote(str(eval(mobj.expand(r"\1"), glo, loc)))
+    return re.sub(r"{{(.+?)}}", replacer, cmd)
+
 @userge.on_cmd("r", about={
     'header': "run commands in shell (terminal)",
     'usage': "{tr}r [commands]",
     'examples': "{tr}r echo \"Userge\""}, allow_channels=False)
-async def _exec_cmd(message: Message):
-    m = message.filtered_input_str
-    cmd = await Terminal.execute(m)
-    user = getuser()
-    uid = os.geteuid()
+async def _exec_term(message: Message):
+    """ run commands in shell (terminal with live update) """
+    await message.edit("`Executing terminal ...`")
+    cmd = message.filtered_input_str
 
-    output = f"`{user}:~#` `{cmd}`\n" if uid == 0 else f"`{user}:~$` `{cmd}`\n"
+    try:
+        parsed_cmd = parse_py_template(cmd, message)
+    except Exception as e:  # pylint: disable=broad-except
+        await message.err(str(e))
+        await CHANNEL.log(f"**Exception**: {type(e).__name__}\n**Message**: " + str(e))
+        return
+    try:
+        t_obj = await Terminal.execute(parsed_cmd)  # type: Term
+    except Exception as t_e:  # pylint: disable=broad-except
+        await message.err(str(t_e))
+        return
+
+    cur_user = getuser()
+    uid = geteuid()
+
+    prefix = f"<b>{cur_user}:~#</b>" if uid == 0 else f"<b>{cur_user}:~$</b>"
+    output = f"{prefix} <pre>{cmd}</pre>\n"
+
+    with message.cancel_callback(t_obj.cancel):
+        await t_obj.init()
+        while not t_obj.finished:
+            await message.edit(f"{output}<pre>{t_obj.line}</pre>", parse_mode=enums.ParseMode.HTML)
+            await t_obj.wait(config.Dynamic.EDIT_SLEEP_TIMEOUT)
+        if t_obj.cancelled:
+            await message.canceled(reply=True)
+            return
+
     count = 0
-    while not cmd.finished:
+    while not t_obj.finished:
         count += 1
         await asyncio.sleep(0.3)
         if count >= 5:
             count = 0
             await asyncio.sleep(3)
-            out_data = f"{output}`{cmd.line}`"
+            out_data = f"{output}<pre>{t_obj.line}</pre>\n{prefix}"
             await message.edit(out_data)
             del out_data
-    out_data = f"`{output}{cmd.output}`"
+    out_data = f"{output}<pre>{t_obj.output}</pre>\n{prefix}"
+
     if len(out_data) > 4096:
-        message_id = message.id
-        if message.reply_to_message:
-            message_id = message.reply_to_message.id
-        file_path = os.path.join(config.Dynamic.DOWN_PATH, "terminal.txt")
-        async with aiofiles.open(file_path, 'w') as out_file:
-            await out_file.write(out_data)
-        await message.client.send_document(chat_id=message.chat.id,
-                                           document=file_path,
-                                           caption=m,
-                                           reply_to_message_id=message_id)
-        os.remove(file_path)
+        await message.edit_or_send_as_file(
+            out_data, as_raw=True, parse_mode=enums.ParseMode.HTML, filename="terminal.txt", caption=cmd)
+        del out_data
+
     await message.edit(out_data, caption=m)
     del out_data
