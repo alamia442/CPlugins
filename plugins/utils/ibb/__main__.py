@@ -87,7 +87,6 @@ except ImportError:
 
     setsid = None
 
-import os
 from getpass import getuser
 import aiofiles
 
