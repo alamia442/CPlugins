@@ -161,8 +161,6 @@ class Terminal:
         self._finished = False
         self._loop = asyncio.get_running_loop()
         self._listener = self._loop.create_future()
-        self._stdout_line = b''
-        self._stderr_line = b''
 
     @property
     def line(self) -> str:
@@ -170,7 +168,7 @@ class Terminal:
     
     @property
     def read_line(self) -> str:
-        return (self._stdout_line + self._stderr_line).decode('utf-8').rstrip()
+        return self._line.decode('utf-8').rstrip()
     
     @property
     def output(self) -> str:
