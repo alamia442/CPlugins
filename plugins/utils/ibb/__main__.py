@@ -73,6 +73,7 @@ async def _mystats(message: Message):
 
 import os
 from getpass import getuser
+import aiofiles
 
 from ..ibb.terminal import Terminal
 
@@ -88,30 +89,23 @@ async def _exec_cmd(message: Message):
 
     output = f"`{user}:~#` `{cmd}`\n" if uid == 0 else f"`{user}:~$` `{cmd}`\n"
     count = 0
-    k = None
     while not cmd.finished:
         count += 1
         await asyncio.sleep(0.3)
         if count >= 5:
             count = 0
             out_data = f"{output}`{cmd.read_line}`"
-            try:
-                if not k:
-                    k = await message.edit(out_data)
-                else:
-                    await k.edit(out_data)
-            except Exception:
-                pass
+            await message.edit(out_data)
     out_data = f"`{output}{cmd.get_output}`"
     if len(out_data) > 4096:
-        if k:
-            await k.delete()
-        with open("terminal.txt", "w+") as file:
-            file.write(out_data)
-            file.close()
-        await message.reply_document(
-            "terminal.txt", caption=cmd)
+        message_id = message.id
+        if message.reply_to_message:
+            message_id = message.reply_to_message.id
+        file_path = os.path.join(config.Dynamic.DOWN_PATH, "terminal.txt")
+        async with aiofiles.open(file_path, 'w') as out_file:
+        await out_file.write(out_data)
+        await message.client.send_document(chat_id=message.chat.id,
+                                           document=file_path,
+                                           caption=cmd,
+                                           reply_to_message_id=message_id)
         os.remove("terminal.txt")
-        return
-    send = k.edit if k else message.edit
-    await send(out_data)
