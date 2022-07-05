@@ -35,3 +35,38 @@ async def _upibb(message: Message):
             response = requests.post(url, params=params, files=files)
             imgurl = response.json()['data']['url']
             await message.edit(imgurl, disable_web_page_preview=True)
+
+from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, boot_time
+
+SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+
+def get_readable_file_size(size_in_bytes) -> str:
+     if size_in_bytes is None:
+         return '0B'
+     index = 0
+     while size_in_bytes >= 1024:
+         size_in_bytes /= 1024
+         index += 1
+     try:
+         return f'{round(size_in_bytes, 2)}{SIZE_UNITS[index]}'
+     except IndexError:
+         return 'File too large'
+@userge.on_cmd("stats", about={'header': "Stats"})
+async def _mystats(message: Message):
+    await message.edit("`Processing ...`")
+    total, used, free, disk= disk_usage('/')
+    swap, memory = swap_memory(), virtual_memory()
+    stats = f'Total Disk Space: {get_readable_file_size(total)}\n'\
+             f'Used: {get_readable_file_size(used)} | Free: {get_readable_file_size(free)}\n\n'\
+             f'Upload: {get_readable_file_size(net_io_counters().bytes_sent)}\n'\
+             f'Download: {get_readable_file_size(net_io_counters().bytes_recv)}\n\n'\
+             f'CPU: {cpu_percent(interval=0.5)}%\n'\
+             f'RAM: {memory.percent}%\n'\
+             f'DISK: {disk}%\n\n'\
+             f'Physical Cores: {cpu_count(logical=False)}\n'\
+             f'Total Cores: {cpu_count(logical=True)}\n\n'\
+             f'SWAP: {get_readable_file_size(swap.total)} | <b>Used:</b> {swap.percent}%\n'\
+             f'Memory Total: {get_readable_file_size(memory.total)}\n'\
+             f'Memory Free: {get_readable_file_size(memory.available)}\n'\
+             f'Memory Used: {get_readable_file_size(memory.used)}\n'
+    await message.edit(stats)
