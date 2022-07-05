@@ -144,7 +144,7 @@ async def _exec_term(message: Message):
         await message.edit_or_send_as_file(
             out_data, as_raw=True, parse_mode=enums.ParseMode.HTML, filename="terminal.txt", caption=cmd)
     else:
-        await message.edit(out_data, caption=m)
+        await message.edit(out_data, caption=cmd)
     del out_data
 
 class Terminal:
