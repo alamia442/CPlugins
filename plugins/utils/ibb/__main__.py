@@ -76,12 +76,12 @@ from getpass import getuser
 
 from ..ibb.terminal import Terminal
 
-@userge.on_cmd("cmd", about={
+@userge.on_cmd("r", about={
     'header': "run commands in shell (terminal)",
     'flags': {'-r': "raw text when send as file"},
-    'usage': "{tr}run [commands]",
-    'examples': "{tr}run echo \"Userge\""}, allow_channels=False)
-async def exec_cmd(message: Message):
+    'usage': "{tr}r [commands]",
+    'examples': "{tr}r echo \"Userge\""}, allow_channels=False)
+async def _exec_cmd(message: Message):
     m = message.text
     cmd = await Terminal.execute(m)
     user = getuser()
