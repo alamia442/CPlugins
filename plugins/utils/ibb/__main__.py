@@ -123,22 +123,12 @@ async def _exec_term(message: Message):
     with message.cancel_callback(t_obj.cancel):
         await t_obj.init()
         while not t_obj.finished:
-            await message.edit(f"{output}<pre>{t_obj.line}</pre>", parse_mode=enums.ParseMode.HTML)
+            await message.edit(f"{output}<pre>{t_obj.read_line}</pre>", parse_mode=enums.ParseMode.HTML)
             await t_obj.wait(config.Dynamic.EDIT_SLEEP_TIMEOUT)
         if t_obj.cancelled:
             await message.canceled(reply=True)
             return
 
-    count = 0
-    while not t_obj.finished:
-        count += 1
-        await asyncio.sleep(0.3)
-        if count >= 5:
-            count = 0
-            await asyncio.sleep(3)
-            out_data = f"{output}<pre>{t_obj.line}</pre>\n{prefix}"
-            await message.edit(out_data)
-            del out_data
     out_data = f"{output}<pre>{t_obj.output}</pre>\n{prefix}"
 
     if len(out_data) > 4096:
