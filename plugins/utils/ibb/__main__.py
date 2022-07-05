@@ -79,15 +79,6 @@ from ..ibb.terminal import Terminal
 
 CHANNEL = userge.getCLogger()
 
-def parse_py_template(cmd: str, msg: Message):
-    glo, loc = _context(_ContextType.PRIVATE, message=msg,
-                        replied=msg.reply_to_message)
-
-    def replacer(mobj):
-        # nosec pylint: disable=W0123
-        return shlex.quote(str(eval(mobj.expand(r"\1"), glo, loc)))
-    return re.sub(r"{{(.+?)}}", replacer, cmd)
-
 @userge.on_cmd("r", about={
     'header': "run commands in shell (terminal)",
     'usage': "{tr}r [commands]",
@@ -98,7 +89,7 @@ async def _exec_term(message: Message):
     cmd = message.filtered_input_str
 
     try:
-        parsed_cmd = parse_py_template(cmd, message)
+        parsed_cmd = cmd
     except Exception as e:  # pylint: disable=broad-except
         await message.err(str(e))
         await CHANNEL.log(f"**Exception**: {type(e).__name__}\n**Message**: " + str(e))
