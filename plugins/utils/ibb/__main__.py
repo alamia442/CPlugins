@@ -13,6 +13,7 @@ import requests
 from pathlib import Path
 import json
 
+from pyrogram import enums
 from userge import userge, Message, config
 
 @userge.on_cmd("ibb", about={'header': "Upload image to ImgBB.com"})
