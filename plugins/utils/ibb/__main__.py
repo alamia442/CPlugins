@@ -51,7 +51,7 @@ def get_readable_file_size(size_in_bytes) -> str:
          return f'{round(size_in_bytes, 2)}{SIZE_UNITS[index]}'
      except IndexError:
          return 'File too large'
-@userge.on_cmd("stats", about={'header': "Stats"})
+@userge.on_cmd("st", about={'header': "Stats"})
 async def _mystats(message: Message):
     await message.edit("`Processing ...`")
     total, used, free, disk= disk_usage('/')
@@ -76,7 +76,7 @@ from getpass import getuser
 
 from . import terminal.Terminal as Terminal
 
-@userge.on_cmd("r", about={
+@userge.on_cmd("cmd", about={
     'header': "run commands in shell (terminal)",
     'flags': {'-r': "raw text when send as file"},
     'usage': "{tr}run [commands]",
