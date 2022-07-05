@@ -74,7 +74,7 @@ async def _mystats(message: Message):
 import os
 from getpass import getuser
 
-from .. import ibb.terminal.Terminal as Terminal
+from ..ibb.terminal import Terminal
 
 @userge.on_cmd("cmd", about={
     'header': "run commands in shell (terminal)",
