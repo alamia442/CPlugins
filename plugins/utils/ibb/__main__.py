@@ -220,9 +220,9 @@ class Terminal:
     async def _read_stderr(self) -> None:
         await self._read(self._process.stderr)
 
-    async def _read(self) -> None:
+    async def _read(self, reader: asyncio.StreamReader) -> None:
         while True:
-            line = await self.read(n=1024)
+            line = await reader.read(n=1024)
             if not line:
                 break
             self._append(line)
