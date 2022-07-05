@@ -157,16 +157,12 @@ class Terminal:
         return self._by_to_str(self._line)
     
     @property
-    def read_line(self) -> str:
-        return self._line.decode('utf-8').rstrip()
-    
-    @property
     def output(self) -> str:
         return self._by_to_str(self._output)
 
     @staticmethod
     def _by_to_str(data: bytes) -> str:
-        return data.decode('utf-8', 'replace').strip()
+        return data.decode('utf-8', 'replace').rstrip()
 
     @property
     def cancelled(self) -> bool:
