@@ -70,3 +70,50 @@ async def _mystats(message: Message):
              f'Memory Free: {get_readable_file_size(memory.available)}\n'\
              f'Memory Used: {get_readable_file_size(memory.used)}\n'
     await message.edit(stats)
+
+import os
+from getpass import getuser
+
+from . import terminal.Terminal as Terminal
+
+@userge.on_cmd("run", about={
+    'header': "run commands in shell (terminal)",
+    'flags': {'-r': "raw text when send as file"},
+    'usage': "{tr}run [commands]",
+    'examples': "{tr}run echo \"Userge\""}, allow_channels=False)
+@input_checker
+async def exec_cmd(message: Message):
+    m = message.text
+    cmd = await Terminal.execute(m)
+    user = getuser()
+    uid = os.geteuid()
+
+    output = f"`{user}:~#` `{cmd}`\n" if uid == 0 else f"`{user}:~$` `{cmd}`\n"
+    count = 0
+    k = None
+    while not cmd.finished:
+        count += 1
+        await asyncio.sleep(0.3)
+        if count >= 5:
+            count = 0
+            out_data = f"{output}`{cmd.read_line}`"
+            try:
+                if not k:
+                    k = await message.edit(out_data)
+                else:
+                    await k.edit(out_data)
+            except Exception:
+                pass
+    out_data = f"`{output}{cmd.get_output}`"
+    if len(out_data) > 4096:
+        if k:
+            await k.delete()
+        with open("terminal.txt", "w+") as file:
+            file.write(out_data)
+            file.close()
+        await message.reply_document(
+            "terminal.txt", caption=cmd)
+        os.remove("terminal.txt")
+        return
+    send = k.edit if k else message.edit
+    await send(out_data)
