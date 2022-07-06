@@ -130,6 +130,7 @@ async def _exec_term(message: Message):
             return
 
     out_data = f"{output}<pre>{t_obj.output}</pre>\n{prefix}"
+    await t_obj.wait(3)
 
     if len(out_data) > 4096:
         await message.edit_or_send_as_file(
