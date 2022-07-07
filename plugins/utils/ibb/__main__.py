@@ -123,13 +123,13 @@ async def _exec_term(message: Message):
     with message.cancel_callback(t_obj.cancel):
         await t_obj.init()
         while not t_obj.finished:
-            await message.edit(f"{output}<pre>{t_obj.line}</pre>", parse_mode=enums.ParseMode.HTML)
+            await message.edit(f"{prefix}<pre>{t_obj.line}</pre>", parse_mode=enums.ParseMode.HTML)
             await t_obj.wait(3)
         if t_obj.cancelled:
             await message.canceled(reply=True)
             return
 
-    out_data = f"{output}<pre>{t_obj.output}</pre>\n{prefix}"
+    out_data = f"{output}<pre>{t_obj.output}</pre>\n"
     await t_obj.wait(3)
 
     if len(out_data) > 4096:
