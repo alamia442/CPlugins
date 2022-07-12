@@ -16,6 +16,7 @@ from urllib.parse import urlparse
 import aiofiles
 from fake_headers import Headers
 from selenium import webdriver
+from pyrogram import enums
 
 from userge import userge, Message, config
 from .. import grablinks
@@ -54,7 +55,7 @@ async def _grablinks(message: Message):
             else:
                 reply += f" 👉 `{''.join((urlparse(link).netloc, url))}`\n"
     await message.edit_or_send_as_file(text=reply,
-                                       parse_mode='md',
+                                       parse_mode=enums.ParseMode.MARKDOWN,
                                        filename="grablinks.txt",
                                        caption="**All Links** :\n\n")
     driver.quit()
