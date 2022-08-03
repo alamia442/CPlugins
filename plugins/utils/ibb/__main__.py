@@ -124,7 +124,7 @@ async def _exec_term(message: Message):
         await t_obj.init()
         while not t_obj.finished:
             await message.edit(f"{prefix}\n<pre>{t_obj.line}</pre>", parse_mode=enums.ParseMode.HTML)
-            await t_obj.wait(config.Dynamic.EDIT_SLEEP_TIMEOUT)
+            await t_obj.wait(5)
         if t_obj.cancelled:
             await message.canceled(reply=True)
             return
