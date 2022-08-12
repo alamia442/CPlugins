@@ -200,7 +200,8 @@ async def _postss(message: Message):
                                      caption="👉",
                                      reply_to_message_id=message_id)
     )
-    os.remove("dark_h.png")
-    os.remove("dark_f.png")
+    if movie_name.startswith('tt'):
+        os.remove("dark_h.png")
+        os.remove("dark_f.png")
     os.remove("Movie.png")
     driver.quit()
