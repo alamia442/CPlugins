@@ -173,13 +173,13 @@ async def term_(message: Message):
     with message.cancel_callback(t_obj.cancel):
         await t_obj.init()
         while not t_obj.finished:
-            await message.edit(f"{prefix}<pre>{t_obj.line}</pre>", parse_mode=enums.ParseMode.HTML)
+            await message.edit(f"{prefix}\n<pre>{t_obj.line}</pre>", parse_mode=enums.ParseMode.HTML)
             await t_obj.wait(config.Dynamic.EDIT_SLEEP_TIMEOUT)
         if t_obj.cancelled:
             await message.canceled(reply=True)
             return
 
-    out_data = f"{output}<pre>{t_obj.output}</pre>\n"
+    out_data = f"{output}\n<pre>{t_obj.output}</pre>\n"
     await message.edit_or_send_as_file(
         out_data, as_raw=as_raw, parse_mode=enums.ParseMode.HTML, filename="term.txt", caption=cmd)
 
