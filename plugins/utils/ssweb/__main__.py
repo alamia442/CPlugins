@@ -15,15 +15,14 @@ from re import match
 import aiofiles
 from fake_headers import Headers
 from selenium import webdriver
-# -*- coding: UTF-8 -*-
-from PIL import Image
 
 from userge import userge, Message, config
-from .. import webss
+from .. import ssweb
+
 
 @userge.on_cmd("ssweb", about={'header': "Get snapshot of a website"})
 async def _webss(message: Message):
-    if webss.GOOGLE_CHROME_BIN is None:
+    if ssweb.GOOGLE_CHROME_BIN is None:
         await message.edit("`need to install Google Chrome. Module Stopping`", del_in=5)
         return
     link_match = match(r'\bhttps?://.*\.\S+', message.input_str)
@@ -34,7 +33,7 @@ async def _webss(message: Message):
     await message.edit("`Processing ...`")
     chrome_options = webdriver.ChromeOptions()
     header = Headers(headers=False).generate()
-    chrome_options.binary_location = webss.GOOGLE_CHROME_BIN
+    chrome_options.binary_location = ssweb.GOOGLE_CHROME_BIN
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument("--test-type")
     chrome_options.add_argument("--headless")
@@ -43,9 +42,8 @@ async def _webss(message: Message):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument(f"user-agent={header['User-Agent']}")
-    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=f"{webss.GOOGLE_CHROME_DRIVER}", )
+    driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
     driver.get(link)
-    (driver.page_source).encode('utf-8')
     height = driver.execute_script(
         "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
         "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
@@ -55,7 +53,6 @@ async def _webss(message: Message):
         "document.documentElement.clientWidth, document.documentElement.scrollWidth, "
         "document.documentElement.offsetWidth);")
     driver.set_window_size(width + 125, height + 125)
-    driver.maximize_window()
     wait_for = height / 1000
     await message.edit(f"`Generating screenshot of the page...`"
                        f"\n`Height of page = {height}px`"
@@ -83,7 +80,7 @@ async def _webss(message: Message):
 
 @userge.on_cmd("tbo", about={'header': "Get snapshot of IMDB Top Box Office (US)"})
 async def _tboss(message: Message):
-    if webss.GOOGLE_CHROME_BIN is None:
+    if ssweb.GOOGLE_CHROME_BIN is None:
         await message.edit("`need to install Google Chrome. Module Stopping`", del_in=5)
         return
     await message.edit("`Processing ...`")
@@ -98,7 +95,7 @@ async def _tboss(message: Message):
     options.add_argument("--no-sandbox")
     options.add_argument('--disable-gpu')
 
-    driver = webdriver.Chrome(chrome_options=options, executable_path=os.environ.get("GOOGLE_CHROME_DRIVER"), )
+    driver = webdriver.Chrome(chrome_options=options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
     driver.get('https://m.imdb.com/')
     (driver.page_source).encode('utf-8')
     height = driver.execute_script(
@@ -128,7 +125,7 @@ async def _tboss(message: Message):
 
 @userge.on_cmd("post", about={'header': "Get snapshot of IMDB Movie info"})
 async def _postss(message: Message):
-    if webss.GOOGLE_CHROME_BIN is None:
+    if ssweb.GOOGLE_CHROME_BIN is None:
         await message.edit("`need to install Google Chrome. Module Stopping`", del_in=5)
         return
     movie_name = message.input_str
@@ -144,7 +141,7 @@ async def _postss(message: Message):
     options.add_argument("--no-sandbox")
     options.add_argument('--disable-gpu')
 
-    driver = webdriver.Chrome(chrome_options=options, executable_path=os.environ.get("GOOGLE_CHROME_DRIVER"), )
+    driver = webdriver.Chrome(chrome_options=options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
     if movie_name.startswith('tt'):
         driver.get(f'https://m.imdb.com/title/{movie_name}')
     else:
