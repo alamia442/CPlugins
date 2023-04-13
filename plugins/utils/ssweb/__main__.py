@@ -107,7 +107,7 @@ async def _tboss(message: Message):
     wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Top Box Office (US)`")
     await asyncio.sleep(int(wait_for))
-    element = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/div/section[2]/div')[-1]
+    element = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/div/section[2]/div')
     element.screenshot("TBO.png")
     driver.close()
     message_id = message.id
@@ -164,8 +164,8 @@ async def _postss(message: Message):
     await message.edit("`Generating screenshot of IMDB Movie info`")
     await asyncio.sleep(int(wait_for))
     if movie_name.startswith('tt'):
-        head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section')[-1]
-        foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')[-1]
+        head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section')
+        foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[9]')
         head.screenshot("dark_h.png")
         foot.screenshot("dark_f.png")
         images_list = ['dark_h.png', 'dark_f.png']
@@ -184,7 +184,7 @@ async def _postss(message: Message):
             y += img.height
         img_merge.save('Movie.png')
     else:
-        img_ss = driver.find_elements_by_xpath('//*[@id="content"]/div/div[2]/div/div[2]/div[1]')[-1]
+        img_ss = driver.find_elements_by_xpath('//*[@id="content"]/div/div[2]/div/div[1]/div[1]')
         img_ss.screenshot("Movie.png")
 
     driver.close()
