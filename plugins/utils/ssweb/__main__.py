@@ -100,13 +100,17 @@ async def _tboss(message: Message):
     driver.get('https://m.imdb.com/')
     await asyncio.sleep(2)
     (driver.page_source).encode('utf-8')
-    driver.execute_script("window.scrollTo(0, 7300);")
-    driver.set_window_size(375, 7300)
+    height = driver.execute_script(
+         "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
+         "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
+         "document.documentElement.offsetHeight);")
+    driver.set_window_size(375, height + 125)
     driver.maximize_window()
-    wait_for = 7300 / 1000
+    wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Top Box Office (US)`")
     await asyncio.sleep(int(wait_for))
-    element = driver.find_element_by_class_name('top-box-office')
+    element = driver.find_element_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/div/section[2]/div')
+    driver.execute_script('arguments[0].scrollIntoView();', element)
     logging.info(element)
     element.screenshot("TBO.png")
     driver.close()
