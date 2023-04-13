@@ -166,8 +166,8 @@ async def _postss(message: Message):
     await message.edit("`Generating screenshot of IMDB Movie info`")
     await asyncio.sleep(int(wait_for))
     if movie_name.startswith('tt'):
-        head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]')
-        foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[5]')
+        head = driver.find_element(by=By.XPATH, value='//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]')
+        foot = driver.find_element(by=By.XPATH, value='//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[5]')
         logging.info(head)
         head.screenshot("dark_h.png")
         foot.screenshot("dark_f.png")
