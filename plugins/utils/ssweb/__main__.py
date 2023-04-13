@@ -18,6 +18,7 @@ from selenium import webdriver
 
 from userge import userge, Message, config
 from .. import ssweb
+import logging
 
 
 @userge.on_cmd("ssweb", about={'header': "Get snapshot of a website"})
@@ -107,7 +108,8 @@ async def _tboss(message: Message):
     wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Top Box Office (US)`")
     await asyncio.sleep(int(wait_for))
-    element = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/div/section[2]/div')[0]
+    element = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/div/section[2]/div')
+    logging.info(element)
     element.screenshot("TBO.png")
     driver.close()
     message_id = message.id
