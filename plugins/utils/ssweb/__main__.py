@@ -105,7 +105,7 @@ async def _tboss(message: Message):
     wait_for = 7300 / 1000
     await message.edit("`Generating screenshot of IMDB Top Box Office (US)`")
     await asyncio.sleep(int(wait_for))
-    element = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/div/section[2]/div')
+    element = driver.find_element_by_class_name('top-box-office')
     logging.info(element)
     element.screenshot("TBO.png")
     driver.close()
