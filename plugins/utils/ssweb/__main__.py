@@ -15,6 +15,7 @@ from re import match
 import aiofiles
 from fake_headers import Headers
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 from userge import userge, Message, config
 from .. import ssweb
