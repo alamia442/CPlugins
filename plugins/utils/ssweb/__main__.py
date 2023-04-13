@@ -98,6 +98,7 @@ async def _tboss(message: Message):
 
     driver = webdriver.Chrome(chrome_options=options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
     driver.get('https://m.imdb.com/')
+    await asyncio.sleep(2)
     (driver.page_source).encode('utf-8')
     driver.execute_script("window.scrollTo(0, 7300);")
     driver.set_window_size(375, 7300)
