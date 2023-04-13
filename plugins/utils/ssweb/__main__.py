@@ -97,20 +97,18 @@ async def _tboss(message: Message):
     options.add_argument('--disable-gpu')
 
     driver = webdriver.Chrome(chrome_options=options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
-    driver.get('https://m.imdb.com/')
-    await asyncio.sleep(2)
+    driver.get('https://m.imdb.com/chart/boxoffice/')
     (driver.page_source).encode('utf-8')
     height = driver.execute_script(
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
          "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
          "document.documentElement.offsetHeight);")
-    driver.set_window_size(375, height + 125)
+    driver.set_window_size(1000, height + 125)
     driver.maximize_window()
     wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Top Box Office (US)`")
     await asyncio.sleep(int(wait_for))
-    element = driver.find_element_by_xpath('//*[@id="__next"]/main/div/div[3]/div[7]/div/section[2]/div')
-    driver.execute_script('arguments[0].scrollIntoView();', element)
+    element = driver.find_element_by_xpath('//*[@id="content-2-wide"]')
     logging.info(element)
     element.screenshot("TBO.png")
     driver.close()
@@ -168,8 +166,9 @@ async def _postss(message: Message):
     await message.edit("`Generating screenshot of IMDB Movie info`")
     await asyncio.sleep(int(wait_for))
     if movie_name.startswith('tt'):
-        head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]')[-1]
-        foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[5]')[-1]
+        head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]')
+        foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[5]')
+        logging.info(head, foot)
         head.screenshot("dark_h.png")
         foot.screenshot("dark_f.png")
         images_list = ['dark_h.png', 'dark_f.png']
