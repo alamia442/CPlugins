@@ -150,7 +150,6 @@ async def term_(message: Message):
     """ run commands in shell (terminal with live update) """
     await message.edit("`Executing terminal ...`")
     cmd = message.filtered_input_str
-    as_raw = '-r' in message.flags
 
     try:
         parsed_cmd = parse_py_template(cmd, message)
@@ -181,7 +180,7 @@ async def term_(message: Message):
 
     out_data = f"{output}\n<pre>{t_obj.output}</pre>\n"
     await message.edit_or_send_as_file(
-        out_data, as_raw=as_raw, parse_mode=enums.ParseMode.HTML, filename="term.txt", caption=cmd)
+        out_data, as_raw=True, parse_mode=enums.ParseMode.HTML, filename="term.txt", caption=cmd)
 
 
 def parse_py_template(cmd: str, msg: Message):
