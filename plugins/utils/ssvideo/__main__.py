@@ -20,9 +20,7 @@ async def down_load_media(message: Message):
     dl_loc = ''
     vid_loc = ''
     d_in = ''
-    fol = config.Dynamic.DOWN_PATH
-    doc = f"{fol}ss.png"
-    #should_clean = False
+    should_clean = False
     if replied:
         if not (
             replied.video
@@ -49,7 +47,7 @@ async def down_load_media(message: Message):
             vid_loc = message.input_str
         else:
             dl_loc, d_in = await download.handle_download(message, resource)
-            #should_clean = True
+            should_clean = True
     except ProcessCanceled:
         await message.canceled()
     except Exception as e_e:  # pylint: disable=broad-except
@@ -57,16 +55,20 @@ async def down_load_media(message: Message):
 
     await message.edit("Compiling Resources")
     try:
-        command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o {doc}"
+        command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
         os.system(command)
     except Exception as e_e:
         await message.err(str(e_e))
-        command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o {doc}"
+        command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o ss.png"
         os.system(command)
 
+    """fol = config.Dynamic.DOWN_PATH
+    doc = f'{fol}ss.png'"""
     await message.client.send_document(
         chat_id=message.chat.id,
-        document=doc)
-
+        document='ss.png')
+    """if should_clean:
+        os.remove(vid_loc)
+        os.remove(doc)"""
     await asyncio.sleep(0.5)
     await message.edit("Done.")
