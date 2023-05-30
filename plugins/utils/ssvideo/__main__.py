@@ -21,8 +21,6 @@ async def down_load_media(message: Message):
     vid_loc = ''
     d_in = ''
     should_clean = False
-    fol = config.Dynamic.DOWN_PATH
-    doc = f"{fol}ss.png"
     if replied:
         if not (
             replied.video
@@ -59,15 +57,17 @@ async def down_load_media(message: Message):
 
     await message.edit("Compiling Resources")
     try:
-        command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o {doc}"
+        command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
         os.system(command)
     except Exception:
-        command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o {doc}"
+        command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o ss.png"
         os.system(command)
 
     await message.client.send_document(
         chat_id=message.chat.id,
         document=doc)
+    fol = config.Dynamic.DOWN_PATH
+    doc = f"{fol}ss.png"
     if should_clean:
         os.remove(vid_loc)
         os.remove(doc)
