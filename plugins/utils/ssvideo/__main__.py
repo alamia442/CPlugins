@@ -16,7 +16,7 @@ LOGGER = userge.getLogger(__name__)
     check_downpath=True)
 async def ss_gen(message: Message):
     """ download from tg and url """
-    ss_c = 5
+    ss_c = 3
     should_clean = False
     if message.reply_to_message:
         resource = message.reply_to_message
