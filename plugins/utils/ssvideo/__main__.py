@@ -52,9 +52,9 @@ async def ss_gen(message: Message):
 
     await message.client.send_document(
         chat_id=message.chat.id,
-        document="/ss.png")
+        document="ss.png")
     if should_clean:
         os.remove(dl_loc)
-        os.remove("/ss.png")
+        os.remove("ss.png")
     await asyncio.sleep(0.5)
     await message.edit("Done.")
