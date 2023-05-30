@@ -60,12 +60,12 @@ async def ss_gen(message: Message):
     width = int(ss_c)*1024
     try:
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
-                -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:14 -k 5a7f97 -L 4:2 \
+                -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
         os.system(command)
     except Exception:
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
-                -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:14 -k 5a7f97 -L 4:2 \
+                -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
         os.system(command)
     await message.edit("`Uploading image to ImgBB ...`")
