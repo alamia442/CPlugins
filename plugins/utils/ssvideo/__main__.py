@@ -16,11 +16,13 @@ LOGGER = userge.getLogger(__name__)
     check_downpath=True)
 async def ss_gen(message: Message):
     """ download from tg and url """
+    replied = message.reply_to_message
+    vid_loc = ''
     ss_c = 3
     should_clean = False
-    if message.reply_to_message:
-        resource = message.reply_to_message
-    elif message.input_str:
+    
+    await message.edit("Checking you Input?🧐🤔😳")
+    if message.input_str:
         if ' ' in message.input_str:
             ss_c, resource = message.input_str.split(" ", 1)
         else:
@@ -28,32 +30,39 @@ async def ss_gen(message: Message):
                 ss_c = int(message.input_str)
             except ValueError:
                 resource = message.input_str
-    else:
-        await message.err("nothing found to download")
-        return
 
-    try:
-        if not message.reply_to_message and os.path.isfile(resource):
-            command = f"vcsi -g {ss_c}x{ss_c} {resource} -o ss.png"
-        else:
+    if not os.path.isfile(resource) and replied:
+        if not (
+            replied.video
+            or replied.animation
+            or (replied.document and "video" in replied.document.mime_type)
+        ):
+            await message.edit("I doubt it is a video")
+            return
+        await message.edit("Downloading Video to my Local")
+        try:
             dl_loc, d_in = await ssvideo.handle_download(message, resource)
-            should_clean = False
-            command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
-    except ProcessCanceled:
-        await message.canceled()
-    except Exception as e_e:  # pylint: disable=broad-except
-        await message.err(str(e_e))
+        except ProcessCanceled:
+            await message.canceled()
+        except Exception as e_e:  # pylint: disable=broad-except
+            await message.err(str(e_e))
+        command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
+        should_clean = False
+    else:
+        command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o ss.png"
 
     try:
         os.system(command)
     except Exception as e_e:
         await message.err(str(e_e))
 
+    dir = config.Dynamic.DOWN_PATH
+    doc = f"{dir}/ss.png"
     await message.client.send_document(
         chat_id=message.chat.id,
-        document="ss.png")
+        document=doc)
     if should_clean:
         os.remove(dl_loc)
-        os.remove("ss.png")
+        os.remove(doc)
     await asyncio.sleep(0.5)
     await message.edit("Done.")
