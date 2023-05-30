@@ -10,6 +10,7 @@
 
 
 import os
+import requests
 
 from userge import userge, Message
 from userge.utils.exceptions import ProcessCanceled
@@ -47,6 +48,7 @@ async def ss_gen(message: Message):
         return
     try:
         dl_loc, d_in = await download.handle_download(message, resource)
+        should_clean = True
     except ProcessCanceled:
         await message.canceled()
     except Exception as e_e:  # pylint: disable=broad-except
@@ -55,12 +57,21 @@ async def ss_gen(message: Message):
         await message.edit(f"Downloaded to `{dl_loc}` in {d_in} seconds")
     await message.edit("Generating Screenshot . . .")
     try:
-        command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
+        command = f"vcsi --background-color 5a7f97 --metadata-font-color ffffff \
+                --metadata-font /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -g {ss_c}x{ss_c} {dl_loc} -o generate_screenshot.png"
         os.system(command)
     except Exception:
-        command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o ss.png"
+        command = f"vcsi --background-color 5a7f97 --metadata-font-color ffffff \
+                --metadata-font /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -g {ss_c}x{ss_c} {dl_loc} -o generate_screenshot.png"
         os.system(command)
-    await message.client.send_document(
-        chat_id=message.chat.id,
-        document='ss.png')
-    await message.edit("Done.")
+    await message.edit("`Uploading image to ImgBB ...`")
+    with message.cancel_callback():
+        params = {'key': '09fa3aa9bb2d2580398572e1f450ff53'}
+        url = 'https://api.imgbb.com/1/upload'
+        files = {'image': open('generate_screenshot.png', 'rb')}
+        response = requests.post(url, params=params, files=files)
+        imgurl = response.json()['data']['url']
+        await message.edit(imgurl, disable_web_page_preview=True)
+    if should_clean:
+        os.remove(dl_loc)
+        os.remove('generate_screenshot.png')
