@@ -19,6 +19,7 @@ async def down_load_media(message: Message):
     ss_c = 5
     dl_loc = ''
     vid_loc = ''
+    d_in = ''
     should_clean = False
     fol = config.Dynamic.DOWN_PATH
     doc = f"{fol}/ss.png"
