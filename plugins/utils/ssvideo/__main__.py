@@ -33,7 +33,7 @@ async def ss_gen(message: Message):
         return
 
     if os.path.isfile(resource):
-        command = f"vcsi -g {ss_c}x{ss_c} {resource} -o /ss.png"
+        command = f"vcsi -g {ss_c}x{ss_c} {resource} -o ss.png"
     else:
         try:
             dl_loc, d_in = await ssvideo.handle_download(message, resource)
@@ -43,7 +43,7 @@ async def ss_gen(message: Message):
             await message.err(str(e_e))
         else:
             should_clean = True
-            command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o /ss.png"
+            command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
 
     try:
         os.system(command)
