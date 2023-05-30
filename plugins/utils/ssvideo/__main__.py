@@ -52,8 +52,6 @@ async def down_load_media(message: Message):
         await message.canceled()
     except Exception as e_e:  # pylint: disable=broad-except
         await message.err(str(e_e))
-    else:
-        await message.edit(f"Downloaded to `{dl_loc}` in {d_in} seconds")
 
     await message.edit("Compiling Resources")
     try:
