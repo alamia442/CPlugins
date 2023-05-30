@@ -22,7 +22,7 @@ async def down_load_media(message: Message):
     d_in = ''
     should_clean = False
     fol = config.Dynamic.DOWN_PATH
-    doc = f"{fol}/ss.png"
+    doc = f"{fol}ss.png"
     if replied:
         if not (
             replied.video
