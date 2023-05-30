@@ -37,7 +37,7 @@ async def ss_gen(message: Message):
             command = f"vcsi -g {ss_c}x{ss_c} {resource} -o ss.png"
         else:
             dl_loc, d_in = await ssvideo.handle_download(message, resource)
-            should_clean = True
+            should_clean = False
             command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
     except ProcessCanceled:
         await message.canceled()
