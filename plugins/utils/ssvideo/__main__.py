@@ -57,14 +57,15 @@ async def ss_gen(message: Message):
     else:
         await message.edit(f"Downloaded to `{dl_loc}` in {d_in} seconds")
     await message.edit("Generating Screenshot . . .")
+    width = int(ss_c)*1240
     try:
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
-                -w 2160 -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:12 -k 5a7f97 -L 4:2 \
+                -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:12 -k 5a7f97 -L 4:2 \
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
         os.system(command)
     except Exception:
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
-                -w 2160 -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:12 -k 5a7f97 -L 4:2 \
+                -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:12 -k 5a7f97 -L 4:2 \
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
         os.system(command)
     await message.edit("`Uploading image to ImgBB ...`")
