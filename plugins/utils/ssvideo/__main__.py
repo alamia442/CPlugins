@@ -17,6 +17,8 @@ async def down_load_media(message: Message):
     """ download from tg and url """
     replied = message.reply_to_message
     ss_c = 5
+    dl_loc = ''
+    vid_loc = ''
     should_clean = False
     fol = config.Dynamic.DOWN_PATH
     doc = f"{fol}/ss.png"
