@@ -14,26 +14,14 @@ LOGGER = userge.getLogger(__name__)
     'header': "Screen Shot Generator",
     'usage': "{tr}ss [No of SS (optional)] [url | path | reply to telegram media]"},
     check_downpath=True)
-async def ss_gen(message: Message):
+async def down_load_media(message: Message):
     """ download from tg and url """
     replied = message.reply_to_message
-    await message.err(str(replied))
-    await message.err(str(message.input_str))
-    """vid_loc = ''
-    ss_c = 3
+    ss_c = 5
     should_clean = False
-    
-    await message.edit("Checking you Input?🧐🤔😳")
-    if message.input_str:
-        if ' ' in message.input_str:
-            ss_c, resource = message.input_str.split(" ", 1)
-        else:
-            try:
-                ss_c = int(message.input_str)
-            except ValueError:
-                resource = message.input_str
-
-    if not os.path.isfile(resource) and replied:
+    fol = config.Dynamic.DOWN_PATH
+    doc = f"{fol}/ss.png"
+    if replied:
         if not (
             replied.video
             or replied.animation
@@ -41,30 +29,45 @@ async def ss_gen(message: Message):
         ):
             await message.edit("I doubt it is a video")
             return
-        await message.edit("Downloading Video to my Local")
-        try:
-            dl_loc, d_in = await ssvideo.handle_download(message, resource)
-        except ProcessCanceled:
-            await message.canceled()
-        except Exception as e_e:  # pylint: disable=broad-except
-            await message.err(str(e_e))
-        command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
-        should_clean = False
+        resource = replied
+    elif message.input_str:
+        if ' ' in message.input_str:
+            ss_c, resource = message.input_str.split(" ", 1)
+        else:
+            try:
+                ss_c = int(message.input_str)
+            except ValueError:
+                resource = message.input_str
     else:
-        command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o ss.png"
+        await message.err("nothing found to download")
+        return
 
     try:
-        os.system(command)
-    except Exception as e_e:
+        if os.path.isfile(resource):
+            vid_loc = message.input_str
+        else:
+            dl_loc, d_in = await download.handle_download(message, resource)
+            should_clean = True
+    except ProcessCanceled:
+        await message.canceled()
+    except Exception as e_e:  # pylint: disable=broad-except
         await message.err(str(e_e))
+    else:
+        await message.edit(f"Downloaded to `{dl_loc}` in {d_in} seconds")
 
-    dir = config.Dynamic.DOWN_PATH
-    doc = f"{dir}/ss.png"
+    await message.edit("Compiling Resources")
+    try:
+        command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o {doc}"
+        os.system(command)
+    except Exception:
+        command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o {doc}"
+        os.system(command)
+
     await message.client.send_document(
         chat_id=message.chat.id,
         document=doc)
     if should_clean:
-        os.remove(dl_loc)
+        os.remove(vid_loc)
         os.remove(doc)
     await asyncio.sleep(0.5)
-    await message.edit("Done.")"""
+    await message.edit("Done.")
