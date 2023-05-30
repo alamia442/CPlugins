@@ -11,6 +11,7 @@
 
 import os
 import requests
+import glob
 
 from userge import userge, Message
 from userge.utils.exceptions import ProcessCanceled
@@ -57,21 +58,24 @@ async def ss_gen(message: Message):
         await message.edit(f"Downloaded to `{dl_loc}` in {d_in} seconds")
     await message.edit("Generating Screenshot . . .")
     try:
-        command = f"vcsi --background-color 5a7f97 --metadata-font-color ffffff \
-                --metadata-font /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -g {ss_c}x{ss_c} {dl_loc} -o generate_screenshot.png"
+        command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
+                -w 2160 -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:12 -k 5a7f97 -L 4:2 \
+                -O {os.getcwd()} -o _preview.png {dl_loc}"
         os.system(command)
     except Exception:
-        command = f"vcsi --background-color 5a7f97 --metadata-font-color ffffff \
-                --metadata-font /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -g {ss_c}x{ss_c} {dl_loc} -o generate_screenshot.png"
+        command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
+                -w 2160 -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:12 -k 5a7f97 -L 4:2 \
+                -O {os.getcwd()} -o _preview.png {dl_loc}"
         os.system(command)
     await message.edit("`Uploading image to ImgBB ...`")
+    file_name = glob.glob(f"{os.getcwd()}*_preview.png")[0]
     with message.cancel_callback():
         params = {'key': '09fa3aa9bb2d2580398572e1f450ff53'}
         url = 'https://api.imgbb.com/1/upload'
-        files = {'image': open('generate_screenshot.png', 'rb')}
+        files = {'image': open(file_name, 'rb')}
         response = requests.post(url, params=params, files=files)
         imgurl = response.json()['data']['url']
         await message.edit(imgurl, disable_web_page_preview=True)
     if should_clean:
         os.remove(dl_loc)
-        os.remove('generate_screenshot.png')
+        os.remove(file_name)
