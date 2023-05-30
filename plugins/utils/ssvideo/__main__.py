@@ -31,7 +31,7 @@ async def ss_gen(message: Message):
     vid_loc = ''
     ss_c = 3
     should_clean = False
-    await message.edit("Checking you Input?🧐🤔😳")
+    await message.edit("Checking you Input . . .")
     if message.reply_to_message:
         resource = message.reply_to_message
     elif message.input_str:
