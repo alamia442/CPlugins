@@ -3,6 +3,7 @@ import asyncio
 
 from userge import userge, Message, config
 from userge.utils.exceptions import ProcessCanceled
+from userge.utils import runcmd
 
 from .. import ssvideo
 
@@ -56,11 +57,10 @@ async def down_load_media(message: Message):
     await message.edit("Compiling Resources")
     try:
         command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
-        os.system(command)
-    except Exception as e_e:
-        await message.err(str(e_e))
+        await runcmd(command)
+    except Exception:
         command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o ss.png"
-        os.system(command)
+        await runcmd(command)
 
     """fol = config.Dynamic.DOWN_PATH
     doc = f'{fol}ss.png'"""
