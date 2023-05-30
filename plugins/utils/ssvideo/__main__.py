@@ -68,7 +68,7 @@ async def ss_gen(message: Message):
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
         os.system(command)
     await message.edit("`Uploading image to ImgBB ...`")
-    file_name = glob.glob(f"{os.getcwd()}*_preview.png")[0]
+    file_name = glob.glob("*_preview.png")[0]
     with message.cancel_callback():
         params = {'key': '09fa3aa9bb2d2580398572e1f450ff53'}
         url = 'https://api.imgbb.com/1/upload'
