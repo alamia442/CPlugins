@@ -17,7 +17,9 @@ LOGGER = userge.getLogger(__name__)
 async def ss_gen(message: Message):
     """ download from tg and url """
     replied = message.reply_to_message
-    vid_loc = ''
+    await message.err(str(replied))
+    await message.err(str(message.input_str))
+    """vid_loc = ''
     ss_c = 3
     should_clean = False
     
@@ -65,4 +67,4 @@ async def ss_gen(message: Message):
         os.remove(dl_loc)
         os.remove(doc)
     await asyncio.sleep(0.5)
-    await message.edit("Done.")
+    await message.edit("Done.")"""
