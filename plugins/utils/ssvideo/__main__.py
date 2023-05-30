@@ -49,7 +49,7 @@ async def down_load_media(message: Message):
             vid_loc = message.input_str
         else:
             dl_loc, d_in = await download.handle_download(message, resource)
-            should_clean = True
+            #should_clean = True
     except ProcessCanceled:
         await message.canceled()
     except Exception as e_e:  # pylint: disable=broad-except
