@@ -18,6 +18,7 @@ from pathlib import Path
 from userge import userge, Message
 from userge.utils.exceptions import ProcessCanceled
 from userge.utils import is_url
+from userge.utils.tools import runcmd
 from ...misc import download
 
 LOGGER = userge.getLogger(__name__)
@@ -64,12 +65,12 @@ async def ss_gen(message: Message):
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
-        os.system(command)
+        await runcmd(command)
     except Exception:
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
-        os.system(command)
+        await runcmd(command)
     await message.edit("`Uploading image to ImgBB ...`")
     file_name = glob.glob("*_preview.png")[0]
     with message.cancel_callback():
