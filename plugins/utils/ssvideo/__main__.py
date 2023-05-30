@@ -16,7 +16,6 @@ LOGGER = userge.getLogger(__name__)
     check_downpath=True)
 async def ss_gen(message: Message):
     """ download from tg and url """
-    ss_c = 5
     should_clean = False
     if message.reply_to_message:
         resource = message.reply_to_message
@@ -32,18 +31,17 @@ async def ss_gen(message: Message):
         await message.err("nothing found to download")
         return
 
-    if os.path.isfile(resource):
-        command = f"vcsi -g {ss_c}x{ss_c} {resource} -o ss.png"
-    else:
-        try:
-            dl_loc, d_in = await ssvideo.handle_download(message, resource)
-        except ProcessCanceled:
-            await message.canceled()
-        except Exception as e_e:  # pylint: disable=broad-except
-            await message.err(str(e_e))
+    try:
+        if not message.reply_to_message and os.path.isfile(resource):
+            command = f"vcsi -g {ss_c}x{ss_c} {resource} -o ss.png"
         else:
+            dl_loc, d_in = await ssvideo.handle_download(message, resource)
             should_clean = True
             command = f"vcsi -g {ss_c}x{ss_c} {dl_loc} -o ss.png"
+    except ProcessCanceled:
+        await message.canceled()
+    except Exception as e_e:  # pylint: disable=broad-except
+        await message.err(str(e_e))
 
     try:
         os.system(command)
