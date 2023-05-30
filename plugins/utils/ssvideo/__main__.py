@@ -62,13 +62,11 @@ async def ss_gen(message: Message):
     except Exception:
         command = f"vcsi -g {ss_c}x{ss_c} {vid_loc} -o ss.png"
         os.system(command)
-    dir = config.Dynamic.DOWN_PATH
-    doc = f"{dir}/ss.png"
     await message.client.send_document(
         chat_id=message.chat.id,
-        document=doc)
+        document='ss.png')
     if should_clean:
         os.remove(vid_loc)
-        os.remove(doc)
+        os.remove('ss.png')
     await asyncio.sleep(0.5)
     await message.edit("Done.")
