@@ -12,6 +12,7 @@
 import os
 import requests
 import glob
+import asyncio
 
 from userge import userge, Message
 from userge.utils.exceptions import ProcessCanceled
@@ -76,7 +77,9 @@ async def ss_gen(message: Message):
         files = {'image': open(file_name, 'rb')}
         response = requests.post(url, params=params, files=files)
         imgurl = response.json()['data']['url']
+        await asyncio.sleep(1)
         await message.edit(imgurl, disable_web_page_preview=True)
+    await asyncio.sleep(1)
     if should_clean:
         os.remove(dl_loc)
         os.remove(file_name)
