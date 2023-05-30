@@ -1,6 +1,5 @@
 import os
 import asyncio
-from pathlib import Path
 
 from userge import userge, Message, config
 from userge.utils.exceptions import ProcessCanceled
