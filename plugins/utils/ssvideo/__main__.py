@@ -32,6 +32,8 @@ LOGGER = userge.getLogger(__name__)
 async def ss_gen(message: Message):
     """ download from tg and url """
     vid_loc = ''
+    dl_loc = ''
+    d_in = ''
     ss_c = 3
     should_clean = False
     await message.edit("Checking you Input . . .")
