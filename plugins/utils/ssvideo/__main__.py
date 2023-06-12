@@ -32,6 +32,7 @@ LOGGER = userge.getLogger(__name__)
 async def ss_gen(message: Message):
     """ download from tg and url """
     vid_loc = ''
+    resource = ''
     dl_loc = ''
     d_in = ''
     ss_c = 3
