@@ -57,8 +57,9 @@ async def ss_gen(message: Message):
         await message.err("nothing found to download")
         return
     try:
-        dl_loc, d_in = await download.handle_download(message, resource)
-        should_clean = True
+        if not os.path.isfile(vid_loc) or os.path.isfile(resource):
+            dl_loc, d_in = await download.handle_download(message, resource)
+            should_clean = True
     except ProcessCanceled:
         await message.canceled()
     except Exception as e_e:  # pylint: disable=broad-except
