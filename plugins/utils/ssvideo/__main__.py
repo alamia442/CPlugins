@@ -37,9 +37,8 @@ async def ss_gen(message: Message):
     ss_c = 3
     should_clean = False
     await message.edit("Checking you Input . . .")
-    if message.reply_to_message:
-        resource = message.reply_to_message
-    elif message.input_str:
+    
+    if message.input_str:
         if ' ' in message.input_str:
             ss_c, vid_loc = message.input_str.split(" ", 1)
         else:
@@ -49,6 +48,10 @@ async def ss_gen(message: Message):
                 vid_loc = message.input_str
         if is_url(vid_loc):
             resource = vid_loc
+        elif os.path.isfile(vid_loc):
+            dl_loc = vid_loc
+    elif message.reply_to_message:
+        resource = message.reply_to_message
     else:
         await message.err("nothing found to download")
         return
