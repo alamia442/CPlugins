@@ -35,7 +35,7 @@ async def ss_gen(message: Message):
     resource = ''
     dl_loc = ''
     d_in = ''
-    ss_c = 3
+    ss_c = 2
     ss_r = 5
     should_clean = False
     await message.edit("Checking you Input . . .")
