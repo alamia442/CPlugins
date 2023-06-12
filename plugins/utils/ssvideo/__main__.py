@@ -70,7 +70,7 @@ async def ss_gen(message: Message):
     else:
         await message.edit(f"Downloaded to `{dl_loc}` in {d_in} seconds")
     await message.edit("Generating Screenshot . . .")
-    width = int(ss_c)*1024
+    width = int(ss_c)*960
     try:
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
