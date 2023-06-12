@@ -36,15 +36,18 @@ async def ss_gen(message: Message):
     dl_loc = ''
     d_in = ''
     ss_c = 3
+    ss_r = 5
     should_clean = False
     await message.edit("Checking you Input . . .")
     
     if message.input_str:
         if ' ' in message.input_str:
             ss_c, vid_loc = message.input_str.split(" ", 1)
+            ss_r = ss_c
         else:
             try:
                 ss_c = int(message.input_str)
+                ss_r = ss_c
             except ValueError:
                 vid_loc = message.input_str
         if is_url(vid_loc):
@@ -69,12 +72,12 @@ async def ss_gen(message: Message):
     await message.edit("Generating Screenshot . . .")
     width = int(ss_c)*1024
     try:
-        command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
+        command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
         await runcmd(command)
     except Exception:
-        command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_c} \
+        command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
                 -O {os.getcwd()} -o _preview.png {dl_loc}"
         await runcmd(command)
