@@ -11,8 +11,8 @@
 
 import os
 import requests
-import glob
-import asyncio
+from glob import glob
+from asyncio import sleep
 from pathlib import Path
 
 from userge import userge, Message
@@ -72,25 +72,25 @@ async def ss_gen(message: Message):
     await message.edit("Generating Screenshot . . .")
     width = int(ss_c)*1024
     try:
-        command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
+        command = f'mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
-                -O {os.getcwd()} -o _preview.png `{dl_loc}`"
+                -O {os.getcwd()} -o _preview.png "{dl_loc}"'
         await runcmd(command)
     except Exception:
-        command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
+        command = f'mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
-                -O {os.getcwd()} -o _preview.png `{dl_loc}`"
+                -O {os.getcwd()} -o _preview.png "{dl_loc}"'
         await runcmd(command)
     await message.edit("`Uploading image to ImgBB ...`")
-    file_name = glob.glob("*_preview.png")[0]
+    file_name = glob("*_preview.png")[0]
     with message.cancel_callback():
         params = {'key': '09fa3aa9bb2d2580398572e1f450ff53'}
         url = 'https://api.imgbb.com/1/upload'
-        files = {'image': open(file_name, 'rb')}
+        files = {'image': open(f'"{file_name}"', 'rb')}
         response = requests.post(url, params=params, files=files)
         imgurl = response.json()['data']['url']
         await message.edit(imgurl, disable_web_page_preview=True)
     Path(file_name).rename(file_name.replace('preview','backup'))
-    await asyncio.sleep(0.5)
+    await sleep(0.5)
     if should_clean:
         os.remove(dl_loc)
