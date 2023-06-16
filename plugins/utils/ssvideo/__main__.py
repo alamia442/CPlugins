@@ -86,7 +86,7 @@ async def ss_gen(message: Message):
     with message.cancel_callback():
         params = {'key': '09fa3aa9bb2d2580398572e1f450ff53'}
         url = 'https://api.imgbb.com/1/upload'
-        files = {'image': open(f'"{file_name}"', 'rb')}
+        files = {'image': open(file_name, 'rb')}
         response = requests.post(url, params=params, files=files)
         imgurl = response.json()['data']['url']
         await message.edit(imgurl, disable_web_page_preview=True)
