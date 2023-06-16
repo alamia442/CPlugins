@@ -74,12 +74,12 @@ async def ss_gen(message: Message):
     try:
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
-                -O {os.getcwd()} -o _preview.png {dl_loc}"
+                -O {os.getcwd()} -o _preview.png `{dl_loc}`"
         await runcmd(command)
     except Exception:
         command = f"mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
-                -O {os.getcwd()} -o _preview.png {dl_loc}"
+                -O {os.getcwd()} -o _preview.png `{dl_loc}`"
         await runcmd(command)
     await message.edit("`Uploading image to ImgBB ...`")
     file_name = glob.glob("*_preview.png")[0]
