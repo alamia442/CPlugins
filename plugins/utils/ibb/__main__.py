@@ -25,7 +25,7 @@ from enum import Enum
 from getpass import getuser
 from shutil import which
 from typing import Awaitable, Any, Callable, Dict, Optional, Tuple, Iterable
-from ...builtin.executor import parse_py_template, CHANNEL, Term
+from ...builtin.executor.__main__ import parse_py_template, CHANNEL, Term
 
 import aiofiles
 
