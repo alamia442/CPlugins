@@ -25,6 +25,7 @@ from enum import Enum
 from getpass import getuser
 from shutil import which
 from typing import Awaitable, Any, Callable, Dict, Optional, Tuple, Iterable
+from ...builtin import executor
 
 import aiofiles
 
@@ -50,36 +51,6 @@ from pyrogram import enums
 
 from userge import userge, Message, config, pool
 from userge.utils import runcmd
-
-CHANNEL = userge.getCLogger()
-
-
-def input_checker(func: Callable[[Message], Awaitable[Any]]):
-    async def wrapper(message: Message) -> None:
-        replied = message.reply_to_message
-
-        if not message.input_str:
-            if (func.__name__ == "eval_"
-                    and replied and replied.document
-                    and replied.document.file_name.endswith(('.txt', '.py'))
-                    and replied.document.file_size <= 2097152):
-
-                dl_loc = await replied.download()
-                async with aiofiles.open(dl_loc) as jv:
-                    message.text += " " + await jv.read()
-                os.remove(dl_loc)
-                message.flags.update({'file': True})
-            else:
-                await message.err("No Command Found!")
-                return
-
-        cmd = message.input_str
-
-        if "config.env" in cmd:
-            await message.edit("`That's a dangerous operation! Not Permitted!`")
-            return
-        await func(message)
-    return wrapper
 
 @userge.on_cmd("ibb", about={'header': "Upload image to ImgBB.com"})
 async def _upibb(message: Message):
@@ -137,19 +108,17 @@ async def _mystats(message: Message):
              f'Memory Used: {get_readable_file_size(memory.used)}\n'
     await message.edit(stats)
 
-_KEY = '_OLD'
-_EVAL_TASKS: Dict[asyncio.Future, str] = {}
-
-
 @userge.on_cmd("r", about={
     'header': "run commands in shell (terminal)",
+    'flags': {'-r': "raw text when send as file"},
     'usage': "{tr}r [commands]",
     'examples': "{tr}r echo \"Userge\""}, allow_channels=False)
 @input_checker
-async def term_(message: Message):
+async def my_term_(message: Message):
     """ run commands in shell (terminal with live update) """
     await message.edit("`Executing terminal ...`")
     cmd = message.filtered_input_str
+    as_raw = '-r' in message.flags
 
     try:
         parsed_cmd = parse_py_template(cmd, message)
@@ -180,222 +149,4 @@ async def term_(message: Message):
 
     out_data = f"{output}\n<pre>{t_obj.output}</pre>\n"
     await message.edit_or_send_as_file(
-        out_data, as_raw=True, parse_mode=enums.ParseMode.HTML, filename="term.txt", caption=cmd)
-
-
-def parse_py_template(cmd: str, msg: Message):
-    glo, loc = _context(_ContextType.PRIVATE, message=msg,
-                        replied=msg.reply_to_message)
-
-    def replacer(mobj):
-        # nosec pylint: disable=W0123
-        return shlex.quote(str(eval(mobj.expand(r"\1"), glo, loc)))
-    return re.sub(r"{{(.+?)}}", replacer, cmd)
-
-
-class _ContextType(Enum):
-    GLOBAL = 0
-    PRIVATE = 1
-    NEW = 2
-
-
-def _context(context_type: _ContextType, **kwargs) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    if context_type == _ContextType.NEW:
-        try:
-            del globals()[_KEY]
-        except KeyError:
-            pass
-    if _KEY not in globals():
-        globals()[_KEY] = globals().copy()
-    _g = globals()[_KEY]
-    if context_type == _ContextType.PRIVATE:
-        _g = _g.copy()
-    _l = _g.pop(_KEY, {})
-    _l.update(kwargs)
-    return _g, _l
-
-
-def _wrap_code(code: str, args: Iterable[str]) -> str:
-    head = "async def __aexec(" + ', '.join(args) + "):\n try:\n  "
-    tail = "\n finally: globals()['" + _KEY + "'] = locals()"
-    if '\n' in code:
-        code = code.replace('\n', '\n  ')
-    elif (any(True for k_ in keyword.kwlist if k_ not in (
-            'True', 'False', 'None', 'lambda', 'await') and code.startswith(f"{k_} "))
-          or ('=' in code and '==' not in code)):
-        code = f"\n  {code}"
-    else:
-        code = f"\n  return {code}"
-    return head + code + tail
-
-
-def _run_coro(future: asyncio.Future, coro: Awaitable[Any],
-              callback: Callable[[str, bool], Awaitable[Any]]) -> None:
-    loop = asyncio.new_event_loop()
-    task = loop.create_task(coro)
-    userge.loop.call_soon_threadsafe(
-        future.add_done_callback, lambda _: (
-            loop.is_running() and future.cancelled() and loop.call_soon_threadsafe(
-                task.cancel)))
-    try:
-        ret, exc = None, None
-        with redirect() as out:
-            try:
-                ret = loop.run_until_complete(task)
-            except asyncio.CancelledError:
-                return
-            except Exception:  # pylint: disable=broad-except
-                exc = traceback.format_exc().strip()
-            output = exc or out.getvalue()
-            if ret is not None:
-                output += str(ret)
-        loop.run_until_complete(callback(output, exc is not None))
-    finally:
-        loop.run_until_complete(loop.shutdown_asyncgens())
-        loop.close()
-        userge.loop.call_soon_threadsafe(
-            lambda: future.done() or future.set_result(None))
-
-
-_PROXIES = {}
-
-
-class _Wrapper:
-    def __init__(self, original):
-        self._original = original
-
-    def __getattr__(self, name: str):
-        return getattr(
-            _PROXIES.get(
-                threading.current_thread().ident,
-                self._original),
-            name)
-
-
-sys.stdout = _Wrapper(sys.stdout)
-sys.__stdout__ = _Wrapper(sys.__stdout__)
-sys.stderr = _Wrapper(sys.stderr)
-sys.__stderr__ = _Wrapper(sys.__stderr__)
-
-
-@contextmanager
-def redirect() -> io.StringIO:
-    ident = threading.current_thread().ident
-    source = io.StringIO()
-    _PROXIES[ident] = source
-    try:
-        yield source
-    finally:
-        del _PROXIES[ident]
-        source.close()
-
-
-class Term:
-    """ live update term class """
-
-    def __init__(self, process: asyncio.subprocess.Process) -> None:
-        self._process = process
-        self._line = b''
-        self._output = b''
-        self._init = asyncio.Event()
-        self._is_init = False
-        self._cancelled = False
-        self._finished = False
-        self._loop = asyncio.get_running_loop()
-        self._listener = self._loop.create_future()
-
-    @property
-    def line(self) -> str:
-        return self._by_to_str(self._line)
-
-    @property
-    def output(self) -> str:
-        return self._by_to_str(self._output)
-
-    @staticmethod
-    def _by_to_str(data: bytes) -> str:
-        return data.decode('utf-8', 'replace').strip()
-
-    @property
-    def cancelled(self) -> bool:
-        return self._cancelled
-
-    @property
-    def finished(self) -> bool:
-        return self._finished
-
-    async def init(self) -> None:
-        await self._init.wait()
-
-    async def wait(self, timeout: int) -> None:
-        self._check_listener()
-        try:
-            await asyncio.wait_for(self._listener, timeout)
-        except asyncio.TimeoutError:
-            pass
-
-    def _check_listener(self) -> None:
-        if self._listener.done():
-            self._listener = self._loop.create_future()
-
-    def cancel(self) -> None:
-        if self._cancelled or self._finished:
-            return
-        killpg(getpgid(self._process.pid), SIGKILL)
-        self._cancelled = True
-
-    @classmethod
-    async def execute(cls, cmd: str) -> 'Term':
-        kwargs = dict(
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE)
-        if setsid:
-            kwargs['preexec_fn'] = setsid
-        if sh := which(os.environ.get("USERGE_SHELL", "bash")):
-            kwargs['executable'] = sh
-        process = await asyncio.create_subprocess_shell(cmd, **kwargs)
-        t_obj = cls(process)
-        t_obj._start()
-        return t_obj
-
-    def _start(self) -> None:
-        self._loop.create_task(self._worker())
-
-    async def _worker(self) -> None:
-        if self._cancelled or self._finished:
-            return
-        await asyncio.wait([self._read_stdout(), self._read_stderr()])
-        await self._process.wait()
-        self._finish()
-
-    async def _read_stdout(self) -> None:
-        await self._read(self._process.stdout)
-
-    async def _read_stderr(self) -> None:
-        await self._read(self._process.stderr)
-
-    async def _read(self, reader: asyncio.StreamReader) -> None:
-        while True:
-            line = await reader.read(n=1024)
-            if not line:
-                break
-            self._append(line)
-
-    def _append(self, line: bytes) -> None:
-        self._line = line
-        self._output += line
-        self._check_init()
-
-    def _check_init(self) -> None:
-        if self._is_init:
-            return
-        self._loop.call_later(1, self._init.set)
-        self._is_init = True
-
-    def _finish(self) -> None:
-        if self._finished:
-            return
-        self._init.set()
-        self._finished = True
-        if not self._listener.done():
-            self._listener.set_result(None)
+        out_data, as_raw=as_raw, parse_mode=enums.ParseMode.HTML, filename="term.txt", caption=cmd)
