@@ -239,7 +239,7 @@ class Term:
 
     async def _read(self, reader: asyncio.StreamReader) -> None:
         while True:
-            line = await reader.readline(n=1024)
+            line = await reader.read(n=1024)
             if not line:
                 break
             self._append(line)
