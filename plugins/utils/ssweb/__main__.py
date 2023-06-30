@@ -16,8 +16,6 @@ import aiofiles
 from fake_headers import Headers
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 from userge import userge, Message, config
 from .. import ssweb
@@ -153,8 +151,6 @@ async def _postss(message: Message):
         driver.get(f'https://m.imdb.com/title/{movie_name}')
     else:
         driver.get(f'https://mydramalist.com/{movie_name}')
-    wait = WebDriverWait(driver, 10)
-    wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="__next"]/section/div/div[1]/section/div/div[1]/div/div/button/span'))).click()
     height = driver.execute_script(
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
          "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
@@ -172,8 +168,10 @@ async def _postss(message: Message):
     await message.edit("`Generating screenshot of IMDB Movie info`")
     await asyncio.sleep(int(wait_for))
     #logging.info(driver.page_source)
+    element = driver.find_element_by_id('__next')
+    driver.execute_script("arguments[0].setAttribute('style', 'display: true')", element)
     if movie_name.startswith('tt'):
-        head = driver.find_element(by=By.XPATH, value='/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]')
+        head = driver.find_element(by=By.XPATH, value='//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]')
         foot = driver.find_element(by=By.XPATH, value='//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')
         logging.info(head)
         head.screenshot("dark_h.png")
