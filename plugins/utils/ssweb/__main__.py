@@ -16,6 +16,8 @@ import aiofiles
 from fake_headers import Headers
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from userge import userge, Message, config
 from .. import ssweb
@@ -151,7 +153,8 @@ async def _postss(message: Message):
         driver.get(f'https://m.imdb.com/title/{movie_name}')
     else:
         driver.get(f'https://mydramalist.com/{movie_name}')
-    (driver.page_source).encode('utf-8')
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="__next"]/section/div/div[1]/section/div/div[1]/div/div/button/span'))).click()
     height = driver.execute_script(
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
          "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
