@@ -136,6 +136,7 @@ async def _postss(message: Message):
         return
     movie_name = message.input_str
     await message.edit("`Processing ...`")
+    options = webdriver.ChromeOptions()
     header = Headers(headers=False).generate()
     options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_argument('--force-dark-mode')
