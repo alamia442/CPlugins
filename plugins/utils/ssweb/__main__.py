@@ -169,8 +169,8 @@ async def _postss(message: Message):
     await asyncio.sleep(int(wait_for))
     #logging.info(driver.page_source)
     if movie_name.startswith('tt'):
-        head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section')[0]
-        foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')[0]
+        head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section')
+        foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')
         logging.info(head)
         head.screenshot("dark_h.png")
         foot.screenshot("dark_f.png")
