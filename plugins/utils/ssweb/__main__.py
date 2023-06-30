@@ -46,6 +46,7 @@ async def _webss(message: Message):
     chrome_options.add_argument(f"user-agent={header['User-Agent']}")
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
     driver.get(link)
+    logging.info(driver.page_source)
     height = driver.execute_script(
         "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
         "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
@@ -145,6 +146,7 @@ async def _postss(message: Message):
     options.add_argument('--disable-gpu')
 
     driver = webdriver.Chrome(chrome_options=options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
+    logging.info(movie_name)
     if movie_name.startswith('tt'):
         driver.get(f'https://m.imdb.com/title/{movie_name}')
     else:
@@ -166,6 +168,7 @@ async def _postss(message: Message):
     wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Movie info`")
     await asyncio.sleep(int(wait_for))
+    logging.info(driver.page_source)
     if movie_name.startswith('tt'):
         head = driver.find_element(by=By.XPATH, value='//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]')
         foot = driver.find_element(by=By.XPATH, value='//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[5]')
