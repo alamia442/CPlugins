@@ -88,6 +88,7 @@ async def _tboss(message: Message):
         return
     await message.edit("`Processing ...`")
     options = webdriver.ChromeOptions()
+    header = Headers(headers=False).generate()
     options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_argument('--force-dark-mode')
     options.add_argument('--ignore-certificate-errors')
@@ -97,6 +98,7 @@ async def _tboss(message: Message):
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument("--no-sandbox")
     options.add_argument('--disable-gpu')
+    options.add_argument(f"user-agent={header['User-Agent']}")
 
     driver = webdriver.Chrome(chrome_options=options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
     driver.get('https://m.imdb.com/chart/boxoffice/')
@@ -134,7 +136,7 @@ async def _postss(message: Message):
         return
     movie_name = message.input_str
     await message.edit("`Processing ...`")
-    options = webdriver.ChromeOptions()
+    header = Headers(headers=False).generate()
     options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_argument('--force-dark-mode')
     options.add_argument('--ignore-certificate-errors')
@@ -144,6 +146,7 @@ async def _postss(message: Message):
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument("--no-sandbox")
     options.add_argument('--disable-gpu')
+    options.add_argument(f"user-agent={header['User-Agent']}")
 
     driver = webdriver.Chrome(chrome_options=options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
     logging.info(movie_name)
