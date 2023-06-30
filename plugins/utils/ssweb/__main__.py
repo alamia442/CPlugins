@@ -101,7 +101,7 @@ async def _tboss(message: Message):
     options.add_argument(f"user-agent={header['User-Agent']}")
 
     driver = webdriver.Chrome(chrome_options=options, executable_path=f"{ssweb.GOOGLE_CHROME_DRIVER}")
-    driver.get('https://m.imdb.com/chart/boxoffice/')
+    driver.get('https://m.imdb.com/')
     (driver.page_source).encode('utf-8')
     height = driver.execute_script(
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
@@ -112,7 +112,7 @@ async def _tboss(message: Message):
     wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Top Box Office (US)`")
     await asyncio.sleep(int(wait_for))
-    element = driver.find_element_by_xpath('//*[@id="content-2-wide"]')
+    element = driver.find_element_by_xpath('//*[@id="__next"]/main/div/div[3]/div[8]/div/section[2]')
     logging.info(element)
     element.screenshot("TBO.png")
     driver.close()
