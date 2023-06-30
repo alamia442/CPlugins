@@ -107,7 +107,7 @@ async def _tboss(message: Message):
          "return Math.max(document.body.scrollHeight, document.body.offsetHeight, "
          "document.documentElement.clientHeight, document.documentElement.scrollHeight, "
          "document.documentElement.offsetHeight);")
-    driver.set_window_size(1000, height + 125)
+    driver.set_window_size(450, height + 125)
     driver.maximize_window()
     wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Top Box Office (US)`")
@@ -177,8 +177,6 @@ async def _postss(message: Message):
     await message.edit("`Generating screenshot of IMDB Movie info`")
     await asyncio.sleep(int(wait_for))
     #logging.info(driver.page_source)
-    await message.edit_or_send_as_file(
-        driver.page_source, filename="ssweb.txt")
     if movie_name.startswith('tt'):
         head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section/div[3]/section')
         foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')
