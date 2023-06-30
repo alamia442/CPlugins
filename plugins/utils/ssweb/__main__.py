@@ -177,6 +177,7 @@ async def _postss(message: Message):
         head = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/section/div[3]/section')
         foot = driver.find_elements_by_xpath('//*[@id="__next"]/main/div/section[1]/div/section/div/div[1]/section[1]')
         logging.info(head)
+        logging.info(foot)
         head.screenshot("dark_h.png")
         foot.screenshot("dark_f.png")
         images_list = ['dark_h.png', 'dark_f.png']
