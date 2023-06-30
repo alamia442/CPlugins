@@ -168,11 +168,11 @@ async def _postss(message: Message):
     else:
         driver.set_window_size(width + 125, height + 125)
     driver.maximize_window()
-    every_element = driver.find_elements_by_xpath("//*")
-    for element in every_element:
-        display_prop = element.value_of_css_property('display')
-        if display_prop == 'none':
-            driver.execute_script("arguments[0].style.display = 'block';", element)
+    #every_element = driver.find_elements_by_xpath("//*")
+    #for element in every_element:
+    #    display_prop = element.value_of_css_property('display')
+    #    if display_prop == 'none':
+    #        driver.execute_script("arguments[0].style.display = 'block';", element)
     wait_for = height / 1000
     await message.edit("`Generating screenshot of IMDB Movie info`")
     await asyncio.sleep(int(wait_for))
