@@ -16,6 +16,7 @@ import aiofiles
 from fake_headers import Headers
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from PIL import Image
 
 from userge import userge, Message, config
 from .. import ssweb
