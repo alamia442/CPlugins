@@ -10,7 +10,7 @@
 
 
 from os import path, getcwd, remove
-import requests
+from requests import post
 from glob import glob
 from asyncio import sleep
 from pathlib import Path
@@ -87,7 +87,7 @@ async def ss_gen(message: Message):
         params = {'key': '09fa3aa9bb2d2580398572e1f450ff53'}
         url = 'https://api.imgbb.com/1/upload'
         files = {'image': open(file_name, 'rb')}
-        response = requests.post(url, params=params, files=files)
+        response = post(url, params=params, files=files)
         imgurl = response.json()['data']['url']
         await message.edit(imgurl, disable_web_page_preview=True)
     Path(file_name).rename(file_name.replace('preview','backup'))
