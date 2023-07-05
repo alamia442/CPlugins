@@ -9,7 +9,7 @@
 # All rights reserved.
 
 
-import os
+from os import path, getcwd, remove
 import requests
 from glob import glob
 from asyncio import sleep
@@ -52,7 +52,7 @@ async def ss_gen(message: Message):
                 vid_loc = message.input_str
         if is_url(vid_loc):
             resource = vid_loc
-        elif os.path.isfile(vid_loc):
+        elif path.isfile(vid_loc):
             dl_loc = vid_loc
     elif message.reply_to_message:
         resource = message.reply_to_message
@@ -60,7 +60,7 @@ async def ss_gen(message: Message):
         await message.err("nothing found to download")
         return
     try:
-        if not os.path.isfile(vid_loc):
+        if not path.isfile(vid_loc):
             dl_loc, d_in = await download.handle_download(message, resource)
             should_clean = True
     except ProcessCanceled:
@@ -74,12 +74,12 @@ async def ss_gen(message: Message):
     try:
         command = f'mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
-                -O {os.getcwd()} -o _preview.png "{dl_loc}"'
+                -O {getcwd()} -o _preview.png "{dl_loc}"'
         await runcmd(command)
     except Exception:
         command = f'mtn -g 10 --shadow=1 -q -H -c {ss_c} -r {ss_r} \
                 -w {width} -D 12 -E 20.0 -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf -F ffffff:18 -k 5a7f97 -L 4:2 \
-                -O {os.getcwd()} -o _preview.png "{dl_loc}"'
+                -O {getcwd()} -o _preview.png "{dl_loc}"'
         await runcmd(command)
     await message.edit("`Uploading image to ImgBB ...`")
     file_name = glob("*_preview.png")[0]
@@ -93,4 +93,4 @@ async def ss_gen(message: Message):
     Path(file_name).rename(file_name.replace('preview','backup'))
     await sleep(0.5)
     if should_clean:
-        os.remove(dl_loc)
+        remove(dl_loc)
